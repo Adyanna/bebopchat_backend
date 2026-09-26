@@ -1,0 +1,122 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+model User {
+    id               Int                @id @default(autoincrement())
+    phone            String             @unique
+    fullname         String
+    password         String
+    isActive         Boolean
+    createdAt        DateTime           @default(now())
+    perfil           Perfil[]
+    contacts         Contacts[]
+    chatParticipants ChatParticipants[]
+    mensajes         Mensaje[]
+    estados          Estados[]
+    views            Views[]
+    calls            Call[]
+    callParticipants CallParticipants[]
+}
+
+model Perfil {
+    id          Int      @id @default(autoincrement())
+    userId      Int
+    user        User     @relation(fields: [userId], references: [id])
+    photoUrl    String
+    estadoCivil Int
+    genero      Int
+    estadoAnimo Int
+    Descripcion Int
+    createdAt   DateTime @default(now())
+}
+
+model Contacts {
+    id            Int      @id @default(autoincrement())
+    userId        Int
+    userContactId Int
+    user          User     @relation(fields: [userId], references: [id])
+    userContact   User     @relation(fields: [userContactId], references: [id])
+    createdAt     DateTime @default(now())
+}
+
+model Chats {
+    id               Int                @id @default(autoincrement())
+    name             String
+    descripcion      String?
+    type             Int
+    createdAt        DateTime           @default(now())
+    chatParticipants ChatParticipants[]
+    mensajes         Mensaje[]
+}
+
+model ChatParticipants {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    chatId    Int
+    role      Int
+    user      User     @relation(fields: [userId], references: [id])
+    chat      Chats    @relation(fields: [chatId], references: [id])
+    createdAt DateTime @default(now())
+}
+
+model Mensaje {
+    id            Int      @id @default(autoincrement())
+    content       String
+    multimediaUrl String
+    type          Int
+    senderId      Int
+    chatId        Int
+    datetime      DateTime @default(now())
+    user          User     @relation(fields: [senderId], references: [id])
+    chat          Chats    @relation(fields: [chatId], references: [id])
+}
+
+model Estados {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    content   String
+    type      Int
+    createdAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
+    views     Views[]
+}
+
+model Views {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    estadoId  Int
+    createdAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
+    estado    Estados  @relation(fields: [estadoId], references: [id])
+}
+
+model Call {
+    id               Int                @id @default(autoincrement())
+    userId           Int
+    type             Int
+    taken            Boolean
+    createdAt        DateTime           @default(now())
+    user             User               @relation(fields: [userId], references: [id])
+    callParticipants CallParticipants[]
+}
+
+model CallParticipants {
+    id        Int      @id @default(autoincrement())
+    userId    Int
+    idCall    Int
+    createdAt DateTime @default(now())
+    user      User     @relation(fields: [userId], references: [id])
+    call      Call     @relation(fields: [idCall], references: [id])
+}
+
+model games {
+    id          Int    @id @default(autoincrement())
+    title       String
+    description String
+    isActive    Float
+}

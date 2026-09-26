@@ -1,0 +1,7 @@
+{ 
+    "name": "Proyectocguasa Backend", 
+    "dockerComposeFile": "compose.yaml", 
+    "service": "devcontainer", 
+    "workspaceFolder": "/workspace", 
+    "forwardPorts": [3000] 
+} 

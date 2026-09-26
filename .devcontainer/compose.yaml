@@ -1,0 +1,25 @@
+services:
+  devcontainer:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      - ../:/workspace:cached
+      - ../uploads:/workspace/uploads
+    command: sleep infinity
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: bebopchat
+      POSTGRES_USER: bebopchat
+      POSTGRES_PASSWORD: bebopchat
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    ports:
+      - "5438:5432"
+
+volumes:
+  postgres_data:
