@@ -72,7 +72,7 @@ model Mensaje {
     type          Int
     senderId      Int
     chatId        Int
-    datetime      DateTime @default(now())
+    createdAt     DateTime @default(now())
     user          User     @relation(fields: [senderId], references: [id])
     chat          Chats    @relation(fields: [chatId], references: [id])
 }
@@ -116,8 +116,9 @@ model CallParticipants {
 }
 
 model games {
-    id          Int    @id @default(autoincrement())
+    id          Int      @id @default(autoincrement())
     title       String
     description String
     isActive    Float
+    createdAt   DateTime @default(now())
 }
