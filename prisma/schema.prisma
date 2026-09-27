@@ -82,6 +82,7 @@ model Estados {
     userId    Int
     content   String
     type      Int
+    isActive  Boolean  @default(true)
     createdAt DateTime @default(now())
     user      User     @relation(fields: [userId], references: [id])
     views     Views[]
