@@ -14,7 +14,8 @@ model User {
     isActive         Boolean
     createdAt        DateTime           @default(now())
     perfil           Perfil[]
-    contacts         Contacts[]
+    contacts         Contacts[]         @relation("UserContacts")
+    contactOf        Contacts[]         @relation("UserContactOf")
     chatParticipants ChatParticipants[]
     mensajes         Mensaje[]
     estados          Estados[]
@@ -39,8 +40,8 @@ model Contacts {
     id            Int      @id @default(autoincrement())
     userId        Int
     userContactId Int
-    user          User     @relation(fields: [userId], references: [id])
-    userContact   User     @relation(fields: [userContactId], references: [id])
+    user          User     @relation("UserContacts", fields: [userId], references: [id])
+    userContact   User     @relation("UserContactOf", fields: [userContactId], references: [id])
     createdAt     DateTime @default(now())
 }
 
