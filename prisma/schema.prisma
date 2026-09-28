@@ -51,34 +51,34 @@ model Chats {
     id               Int                @id @default(autoincrement())
     name             String
     descripcion      String?
-    type             Int
+    type             ChatType           @default(INDIVIDUAL)
     createdAt        DateTime           @default(now())
     chatParticipants ChatParticipants[]
     mensajes         Mensaje[]
 }
 
 model ChatParticipants {
-    id        Int      @id @default(autoincrement())
+    id        Int             @id @default(autoincrement())
     userId    Int
     chatId    Int
-    role      Int
-    user      User     @relation(fields: [userId], references: [id])
-    chat      Chats    @relation(fields: [chatId], references: [id])
-    createdAt DateTime @default(now())
+    role      ParticipantRole
+    user      User            @relation(fields: [userId], references: [id])
+    chat      Chats           @relation(fields: [chatId], references: [id])
+    createdAt DateTime        @default(now())
 
     @@unique([userId, chatId])
 }
 
 model Mensaje {
-    id            Int      @id @default(autoincrement())
+    id            Int         @id @default(autoincrement())
     content       String
     multimediaUrl String?
-    type          Int
+    type          MessageType
     senderId      Int
     chatId        Int
-    createdAt     DateTime @default(now())
-    user          User     @relation(fields: [senderId], references: [id])
-    chat          Chats    @relation(fields: [chatId], references: [id])
+    createdAt     DateTime    @default(now())
+    user          User        @relation(fields: [senderId], references: [id])
+    chat          Chats       @relation(fields: [chatId], references: [id])
 }
 
 model Estados {
@@ -126,4 +126,20 @@ model games {
     description String
     isActive    Float
     createdAt   DateTime @default(now())
+}
+
+enum ParticipantRole {
+    MEMBER
+    ADMIN
+}
+
+enum ChatType {
+    INDIVIDUAL
+    GROUP
+}
+
+enum MessageType {
+    TEXT
+    AUDIO
+    VIDEO
 }
