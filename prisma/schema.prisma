@@ -49,8 +49,8 @@ model Contacts {
 
 model Chats {
     id               Int                @id @default(autoincrement())
-    name             String
-    descripcion      String?
+    name             String?
+    description      String?
     type             ChatType           @default(INDIVIDUAL)
     createdAt        DateTime           @default(now())
     chatParticipants ChatParticipants[]
