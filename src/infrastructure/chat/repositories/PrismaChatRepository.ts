@@ -1,8 +1,18 @@
 import { Chat } from "@/domain/chat/Chat";
-import { Chats as PrismaChat } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { ChatType } from "@prisma/client";
 import { ChatRepository, CreateChatData } from "@/domain/chat/repositories/ChatRepository";
 import { prismaClient } from "@/infrastructure/global/PrismaCLient";
+
+type PrismaChat = Prisma.ChatsGetPayload<{
+    include: {
+        chatParticipants: {
+            include: {
+                user: true;
+            };
+        };
+    };
+}>;
 
 
 export class PrismaChatRepository implements ChatRepository {
@@ -21,6 +31,13 @@ export class PrismaChatRepository implements ChatRepository {
                     }))
                 }
 
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true,
+                    }
+                }
             }
         });
 
@@ -46,7 +63,15 @@ export class PrismaChatRepository implements ChatRepository {
                         }
                     }
                 }
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true,
+                    }
+                }
             }
+
         });
 
         if (!chat) {
@@ -62,7 +87,12 @@ export class PrismaChatRepository implements ChatRepository {
             name: prismaChat.name ?? undefined,
             description: prismaChat.description ?? undefined,
             type: prismaChat.type,
-            createAt: prismaChat.createdAt
+            createAt: prismaChat.createdAt,
+            participants: prismaChat.chatParticipants.map((participant) => ({
+                userId: participant.userId,
+                fullname: participant.user.fullname,
+                role: participant.role
+            }))
         })
     }
 }

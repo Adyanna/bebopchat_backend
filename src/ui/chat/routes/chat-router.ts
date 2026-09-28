@@ -5,4 +5,4 @@ import { creatChatController } from "../controller/create-chat-controller";
 
 export const chatRouter = Router();
 
-chatRouter.post('/', [authenticationMiddleware, creatChatController]);
+chatRouter.post('/', [creatChatController]);

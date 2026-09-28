@@ -18,11 +18,13 @@ export const creatChatController = async (req: Request, res: Response, next: Nex
         const createChatUseCase = new CreateChatUseCase(prismaChatRepository)
 
         const newChat = await createChatUseCase.execute({
-            creatorId: req.userId!,
+            creatorId: 1,
             name,
             description,
             participantIds
         });
+
+        res.status(201).json(newChat);
 
     } catch (error) {
         next(error);
