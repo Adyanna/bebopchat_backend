@@ -19,5 +19,6 @@ export interface CreateChatData {
 
 export interface ChatRepository {
     createChat: (chatData: CreateChatData) => Promise<Chat>;
-    findChatByIds(creatorId: number, participantId: number): Promise<Chat | null>
+    findChatByIds: (creatorId: number, participantId: number) => Promise<Chat | null>
+    findById: (chatId: number) => Promise<Chat | null>
 }

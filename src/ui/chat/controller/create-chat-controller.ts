@@ -10,7 +10,7 @@ const createChatValidationSquema = z.object({
 });
 
 
-export const creatChatController = async (req: Request, res: Response, next: NextFunction) => {
+export const createChatController = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { name, description, participantIds } = createChatValidationSquema.parse(req.body);
 

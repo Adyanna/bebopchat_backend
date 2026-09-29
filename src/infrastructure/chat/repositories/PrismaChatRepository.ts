@@ -81,6 +81,27 @@ export class PrismaChatRepository implements ChatRepository {
         return this.restore(chat);
     }
 
+    async findById(chatId: number): Promise<Chat | null> {
+        const chat = await this.prisma.chats.findFirst({
+            where: {
+                id: chatId,
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true,
+                    }
+                }
+            }
+        });
+
+        if (!chat) {
+            return null;
+        }
+
+        return this.restore(chat);
+    }
+
     private restore(prismaChat: PrismaChat): Chat {
         return new Chat({
             id: prismaChat.id,

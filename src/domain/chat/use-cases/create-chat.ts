@@ -18,6 +18,7 @@ export class CreateChatUseCase {
     ) { }
 
     async execute(input: CreateChatUseCaseInput): Promise<Chat> {
+        console.log("si entra")
         if (input.participantIds.length < 1) {
             throw new InvalidOperationError("there must be at least one participant in the chat");
         }
@@ -32,7 +33,7 @@ export class CreateChatUseCase {
         if (type === ChatType.GROUP && !input.name?.trim()) {
             throw new ValidationError("group chat name is required");
         }
-        const chatExists = type === ChatType.INDIVIDUAL && await this.chatRepository.findChatByIds(input.creatorId, input.participantIds[0])
+        const chatExists = type === ChatType.INDIVIDUAL && await this.chatRepository.findChatByIds(input.creatorId, input.participantIds[0]);
         if (chatExists) throw new InvalidOperationError("this chat already exists");
 
 

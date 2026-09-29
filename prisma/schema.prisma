@@ -17,7 +17,7 @@ model User {
     contacts         Contacts[]         @relation("UserContacts")
     contactOf        Contacts[]         @relation("UserContactOf")
     chatParticipants ChatParticipants[]
-    mensajes         Mensaje[]
+    mensajes         Message[]
     estados          Estados[]
     views            Views[]
     calls            Call[]
@@ -54,7 +54,7 @@ model Chats {
     type             ChatType           @default(INDIVIDUAL)
     createdAt        DateTime           @default(now())
     chatParticipants ChatParticipants[]
-    mensajes         Mensaje[]
+    mensajes         Message[]
 }
 
 model ChatParticipants {
@@ -69,7 +69,7 @@ model ChatParticipants {
     @@unique([userId, chatId])
 }
 
-model Mensaje {
+model Message {
     id            Int         @id @default(autoincrement())
     content       String
     multimediaUrl String?

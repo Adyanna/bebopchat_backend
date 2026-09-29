@@ -1,8 +1,9 @@
-import { authenticationMiddleware } from "@/ui/global/middleware/authMiddleware";
 import { Router } from "express";
-import { creatChatController } from "../controller/create-chat-controller";
+import { createChatController } from "../controller/create-chat-controller";
+import { createMessageController } from "@/ui/message/controller/create-message-controller";
 
 
 export const chatRouter = Router();
 
-chatRouter.post('/', [creatChatController]);
+chatRouter.post('/', [createChatController]);
+chatRouter.post('/:id/messages', [createMessageController]);
