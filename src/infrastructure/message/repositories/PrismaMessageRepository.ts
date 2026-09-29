@@ -2,6 +2,7 @@ import { MessageData, MessageRepository } from "@/domain/message/repositories/Me
 import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 import { Message as PrismaMessage } from "@prisma/client";
 import { Message } from "@/domain/message/Message";
+import { EditMessageUseCaseInput } from "@/domain/message/use-cases/edit-message";
 
 
 export class PrismaMessageRepository implements MessageRepository {
@@ -19,6 +20,33 @@ export class PrismaMessageRepository implements MessageRepository {
         });
 
         return this.restore(newMessage);
+    }
+
+    async editMessage(params: EditMessageUseCaseInput): Promise<Message> {
+        const editedMessage = await this.prisma.message.update({
+            where: {
+                id: params.messageId,
+            },
+            data: {
+                content: params.newContent
+            }
+        });
+
+        return this.restore(editedMessage);
+    }
+
+    async findById(messageid: number): Promise<Message | null> {
+        const message = await this.prisma.message.findUnique({
+            where: {
+                id: messageid
+            }
+        });
+
+        if (!message) {
+            return null;
+        }
+
+        return this.restore(message);
     }
 
     private restore(prismaMessage: PrismaMessage): Message {

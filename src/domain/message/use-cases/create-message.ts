@@ -2,11 +2,11 @@ import { ChatRepository } from "@/domain/chat/repositories/ChatRepository";
 import { Message } from "../Message";
 import { InvalidOperationError } from "@/domain/errors/ValidationError";
 import { ForbiddenError } from "@/domain/errors/ForbiddenError";
-import { MessageType } from "@prisma/client";
 import { MessageRepository } from "../repositories/MessageRepository";
+import { getMessageType } from "../helpers/get-message-type";
 
 export interface CreateMessageUseCaseInput {
-    chatId: number
+    chatId: number;
     senderId: number;
     multimediaUrl?: string;
     content: string;
@@ -31,8 +31,7 @@ export class CreateMessageUseCase {
             throw new ForbiddenError("Your not a participant in this chat")
         }
 
-        const type = MessageType.TEXT;
-
+        const type = getMessageType({ multimediaUrl: input.multimediaUrl });
 
 
         const message = await this.messageRepository.createMessage({

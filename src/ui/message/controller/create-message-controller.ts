@@ -6,7 +6,7 @@ import { z } from 'zod';
 
 const createMessageValidationSquema = z.object({
     content: z.string().trim().min(1, "Message content is required"),
-    //multimediaUrl: z.url().optional()
+    multimediaUrl: z.url().optional()
 });
 
 
@@ -16,7 +16,7 @@ export const createMessageController = async (req: Request, res: Response, next:
 
     try {
         const chatId = Number(req.params.id);
-        const { content } = createMessageValidationSquema.parse(req.body);
+        const { content, multimediaUrl } = createMessageValidationSquema.parse(req.body);
 
         const prismaMessageRepository = new PrismaMessageRepository();
         const prismaChatRepository = new PrismaChatRepository();
@@ -25,9 +25,9 @@ export const createMessageController = async (req: Request, res: Response, next:
 
         const message = await createMessageUseCase.execute({
             chatId,
-            senderId: 1,
+            senderId: 2,
             content,
-            // multimediaUrl
+            multimediaUrl,
         });
 
         res.status(201).json(message);

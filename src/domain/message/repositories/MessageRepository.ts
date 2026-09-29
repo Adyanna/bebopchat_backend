@@ -1,6 +1,7 @@
 import { MessageType } from "@prisma/client";
 import { Message } from "../Message";
 import { CreateMessageUseCaseInput } from "../use-cases/create-message";
+import { EditMessageUseCaseInput } from "../use-cases/edit-message";
 
 
 export type MessageData = CreateMessageUseCaseInput & {
@@ -8,5 +9,7 @@ export type MessageData = CreateMessageUseCaseInput & {
 }
 
 export interface MessageRepository {
-    createMessage: (messageData: MessageData) => Promise<Message>
+    createMessage: (messageData: MessageData) => Promise<Message>;
+    editMessage: (messageData: EditMessageUseCaseInput) => Promise<Message>
+    findById: (messageId: number) => Promise<Message | null>
 }

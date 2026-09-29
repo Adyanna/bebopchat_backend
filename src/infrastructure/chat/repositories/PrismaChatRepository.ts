@@ -82,7 +82,7 @@ export class PrismaChatRepository implements ChatRepository {
     }
 
     async findById(chatId: number): Promise<Chat | null> {
-        const chat = await this.prisma.chats.findFirst({
+        const chat = await this.prisma.chats.findUnique({
             where: {
                 id: chatId,
             },
