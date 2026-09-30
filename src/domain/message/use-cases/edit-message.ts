@@ -3,6 +3,7 @@ import { ChatRepository } from "@/domain/chat/repositories/ChatRepository";
 import { InvalidOperationError } from "@/domain/errors/ValidationError";
 import { Message } from "../Message";
 import { UnauthorizedError } from "@/domain/errors/UnauthorizedError";
+import { EntityNotFoundError } from "@/domain/errors/EntityNotFoundError";
 export interface EditMessageUseCaseInput {
     chatId: number;
     userId: number;
@@ -13,27 +14,14 @@ export interface EditMessageUseCaseInput {
 export class EditMessageUseCase {
     constructor(
         private readonly messageRepository: MessageRepository,
-        private readonly chatRepository: ChatRepository
     ) { }
 
     async execute(input: EditMessageUseCaseInput): Promise<Message> {
-        const chatExists = await this.chatRepository.findById(input.chatId);
-
-        if (!chatExists) {
-            throw new InvalidOperationError("Non-existent Chat")
-        }
-
-        const userIsParticipant = chatExists.participants.
-            some((paricipant) => paricipant.userId === input.userId)
-
-        if (!userIsParticipant) {
-            throw new UnauthorizedError("You're not a participant in this chat")
-        }
 
         const messageExists = await this.messageRepository.findById(input.messageId);
 
         if (!messageExists) {
-            throw new InvalidOperationError("Non-existent Messsage")
+            throw new EntityNotFoundError('Message', input.messageId.toString())
         }
 
         if (messageExists.chatId !== input.chatId) {
