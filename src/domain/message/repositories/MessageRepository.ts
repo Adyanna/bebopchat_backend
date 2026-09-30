@@ -12,4 +12,5 @@ export interface MessageRepository {
     createMessage: (messageData: MessageData) => Promise<Message>;
     editMessage: (messageData: EditMessageUseCaseInput) => Promise<Message>
     findById: (messageId: number) => Promise<Message | null>
+    deleteMessage: (id: number) => Promise<void>;
 }

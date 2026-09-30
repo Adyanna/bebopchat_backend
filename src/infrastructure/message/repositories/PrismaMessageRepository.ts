@@ -35,6 +35,14 @@ export class PrismaMessageRepository implements MessageRepository {
         return this.restore(editedMessage);
     }
 
+    async deleteMessage(id: number): Promise<void> {
+        await this.prisma.message.delete({
+            where: {
+                id,
+            }
+        })
+    }
+
     async findById(messageid: number): Promise<Message | null> {
         const message = await this.prisma.message.findUnique({
             where: {
