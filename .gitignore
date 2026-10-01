@@ -5,3 +5,4 @@ node_modules
 .cursor
 .devin
 uploads
+.vscode

@@ -13,7 +13,7 @@ model User {
     password         String
     isActive         Boolean
     createdAt        DateTime           @default(now())
-    perfil           Perfil[]
+    perfil           Perfil?
     contacts         Contacts[]         @relation("UserContacts")
     contactOf        Contacts[]         @relation("UserContactOf")
     chatParticipants ChatParticipants[]
@@ -25,15 +25,14 @@ model User {
 }
 
 model Perfil {
-    id          Int      @id @default(autoincrement())
-    userId      Int
-    user        User     @relation(fields: [userId], references: [id])
-    photoUrl    String
-    estadoCivil Int
-    genero      Int
-    estadoAnimo Int
-    Descripcion Int
+    id          Int      @id
+    photoUrl    String?
+    estadoCivil Int?
+    genero      Int?
+    estadoAnimo Int?
+    descripcion String?
     createdAt   DateTime @default(now())
+    user        User     @relation(fields: [id], references: [id])
 }
 
 model Contacts {

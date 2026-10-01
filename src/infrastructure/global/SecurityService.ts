@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import Jwt from 'jsonwebtoken';
-import { SecurityServices } from '@/domain/global/SegurityService';
+import { SecurityServices } from '@/domain/global/SecurityService';
 import { environmentService } from './EnvironmentService';
 
 export class SecurityService implements SecurityServices {
