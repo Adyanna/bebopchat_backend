@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { signupPrismaRepository } from '@/infrastructure/authentication/signupPrismaRepository';
+import { SignupPrismaRepository } from '@/infrastructure/authentication/signupPrismaRepository';
 import { ProfilePrismaRepository } from '@/infrastructure/profile/profilePrismaRepository';
 import { CreateProfileUseCase } from '@/domain/profile/use-cases/createProfileUseCase';
 
@@ -24,7 +24,7 @@ export const createProfileController = async (
     const data = ProfileSchema.parse(req.body);
 
     const profileRepository = new ProfilePrismaRepository();
-    const authRepository = new signupPrismaRepository();
+    const authRepository = new SignupPrismaRepository();
 
     const createProfileUseCase = new CreateProfileUseCase(
       profileRepository,

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { SecurityService } from '@/infrastructure/global/SecurityService';
-import { signupPrismaRepository } from '@/infrastructure/authentication/signupPrismaRepository';
+import { SignupPrismaRepository } from '@/infrastructure/authentication/signupPrismaRepository';
 import { SigninUseCase } from '@/domain/authentication/use-cases/signinUseCase';
 import { signinSchema } from '../schemas/signinSchema';
 
@@ -9,7 +9,7 @@ export const signinController = async (req: Request, res: Response, next: NextFu
   try {
     const data = signinSchema.parse(req.body);
     const segurityService = new SecurityService();
-    const userRepository = new signupPrismaRepository();
+    const userRepository = new SignupPrismaRepository();
     const LoginUser = new SigninUseCase(userRepository, segurityService);
     const resp = await LoginUser.executeToken(data);
 

@@ -14,7 +14,7 @@ type PrismaUser = {
   createdAt: Date;
 };
 
-export class signupPrismaRepository implements AuthRepository {
+export class SignupPrismaRepository implements AuthRepository {
   private readonly prisma = prismaClient;
 
   async findOneUser(params: UserFiltrQuery): Promise<User | null> {
