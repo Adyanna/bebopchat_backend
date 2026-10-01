@@ -53,6 +53,7 @@ model Chats {
     description      String?
     type             ChatType           @default(INDIVIDUAL)
     createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
     chatParticipants ChatParticipants[]
     mensajes         Message[]
 }
