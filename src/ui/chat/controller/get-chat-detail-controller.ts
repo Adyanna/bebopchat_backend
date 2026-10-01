@@ -1,4 +1,4 @@
-import { GetChatDetailUseCase } from "@/domain/chat/use-cases/get-chat";
+import { GetChatDetailUseCase } from "@/domain/chat/use-cases/get-chat-datail";
 import { PrismaChatRepository } from "@/infrastructure/chat/repositories/PrismaChatRepository";
 import { NextFunction, Request, Response } from "express";
 
