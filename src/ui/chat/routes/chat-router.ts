@@ -4,11 +4,13 @@ import { createMessageController } from "@/ui/message/controller/create-message-
 import { editMessageController } from "@/ui/message/controller/edit-message-controller";
 import { deleteMessageController } from "@/ui/message/controller/delete-message-controller";
 import { getMessagesByChatIdController } from "@/ui/message/controller/get-messages-controller";
+import { getChatDetailController } from "../controller/get-chat-controller";
 
 
 export const chatRouter = Router();
 
 chatRouter.post('/', [createChatController]);
+chatRouter.get('/:id/', [getChatDetailController]);
 chatRouter.get('/:id/messages', [getMessagesByChatIdController]);
 chatRouter.post('/:id/messages', [createMessageController]);
 chatRouter.patch('/:id/messages/:messageId', [editMessageController]);

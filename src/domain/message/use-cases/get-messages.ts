@@ -22,13 +22,13 @@ export class GetMessagesByChatUseCase {
     async execute(input: GetMessagesByChatInput):
         Promise<Message[]> {
 
-        const chatExists = await this.chatRepository.findById(input.chatId);
+        const chat = await this.chatRepository.findById(input.chatId);
 
-        if (!chatExists) {
-            throw new InvalidOperationError("Non-existent Chat")
+        if (!chat) {
+            throw new InvalidOperationError("chat not found")
         }
 
-        const userIsParticipant = chatExists.participants.
+        const userIsParticipant = chat.participants.
             some((paricipant) => paricipant.userId === input.userId);
 
         if (!userIsParticipant) {
