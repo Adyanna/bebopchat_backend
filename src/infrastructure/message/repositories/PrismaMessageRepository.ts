@@ -3,6 +3,7 @@ import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 import { Message as PrismaMessage } from "@prisma/client";
 import { Message } from "@/domain/message/Message";
 import { EditMessageUseCaseInput } from "@/domain/message/use-cases/edit-message";
+import { GetMessagesByChatInput } from "@/domain/message/use-cases/get-messages";
 
 
 export class PrismaMessageRepository implements MessageRepository {
@@ -42,6 +43,31 @@ export class PrismaMessageRepository implements MessageRepository {
             }
         })
     }
+
+    async getMessagesByChatId(params: GetMessagesByChatInput):
+        Promise<Message[]> {
+        const { before, limit, chatId } = params;
+        const messagesDb = await this.prisma.message.findMany({
+            where: {
+                chatId,
+                ...(before && {
+                    id: {
+                        lt: before
+                    }
+                })
+            },
+            orderBy: {
+                id: 'desc'
+            },
+            take: limit
+        });
+
+
+        const messages = messagesDb.map(messagedb => this.restore(messagedb)).reverse();
+
+        return messages
+    }
+
 
     async findById(messageid: number): Promise<Message | null> {
         const message = await this.prisma.message.findUnique({
