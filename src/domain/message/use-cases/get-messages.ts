@@ -1,9 +1,9 @@
 import { Pagination } from "@/domain/global/Pagination"
 import { MessageRepository } from "../repositories/MessageRepository";
 import { ChatRepository } from "@/domain/chat/repositories/ChatRepository";
-import { InvalidOperationError } from "@/domain/errors/ValidationError";
 import { UnauthorizedError } from "@/domain/errors/UnauthorizedError";
 import { Message } from "../Message";
+import { EntityNotFoundError } from "@/domain/errors/EntityNotFoundError";
 
 
 export interface MessagesHistory {
@@ -25,7 +25,7 @@ export class GetMessagesByChatUseCase {
         const chat = await this.chatRepository.findById(input.chatId);
 
         if (!chat) {
-            throw new InvalidOperationError("chat not found")
+            throw new EntityNotFoundError('Chat', input.chatId.toString())
         }
 
         const userIsParticipant = chat.participants.

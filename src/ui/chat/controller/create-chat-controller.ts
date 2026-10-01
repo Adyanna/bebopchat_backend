@@ -5,7 +5,7 @@ import { length, z } from 'zod';
 
 const createChatValidationSquema = z.object({
     name: z.string().min(4, "min length for title is 4 characters").optional(),
-    description: z.string().min(30, "Min length for description is 30 characters").optional(),
+    description: z.string().min(15, "Min length for description is 30 characters").optional(),
     participantIds: z.array(z.number()).min(1)
 });
 
@@ -17,14 +17,14 @@ export const createChatController = async (req: Request, res: Response, next: Ne
         const prismaChatRepository = new PrismaChatRepository();
         const createChatUseCase = new CreateChatUseCase(prismaChatRepository)
 
-        const newChat = await createChatUseCase.execute({
-            creatorId: 1,
+        const { chat, isNew } = await createChatUseCase.execute({
+            creatorId: req.userId!,
             name,
             description,
             participantIds
         });
 
-        res.status(201).json(newChat);
+        res.status(isNew ? 201 : 200).json(chat);
 
     } catch (error) {
         next(error);

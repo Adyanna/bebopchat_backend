@@ -12,7 +12,7 @@ export const deleteMessageController = async (req: Request, res: Response, next:
 
         await deleteMessageUseCase.execute({
             messageId,
-            userId: 1,
+            userId: req.userId!,
             chatId
         });
 

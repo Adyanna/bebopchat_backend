@@ -2,6 +2,7 @@ import { UnauthorizedError } from "@/domain/errors/UnauthorizedError";
 import { Chat } from "../Chat";
 import { ChatRepository } from "../repositories/ChatRepository";
 import { InvalidOperationError } from "@/domain/errors/ValidationError";
+import { EntityNotFoundError } from "@/domain/errors/EntityNotFoundError";
 
 
 
@@ -18,7 +19,7 @@ export class GetChatDetailUseCase {
     async execute(input: GetChatDetailUseCaseInput): Promise<Chat> {
         const chat = await this.chatRepository.findById(input.chatId);
         if (!chat) {
-            throw new InvalidOperationError("Chat not found");
+            throw new EntityNotFoundError('Chat', input.chatId.toString());
         }
 
         const userIsParticipant = chat.participants.

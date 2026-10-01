@@ -18,7 +18,7 @@ export const editMessageController = async (req: Request, res: Response, next: N
 
         const message = await editMessageUseCase.execute({
             chatId,
-            userId: 1,
+            userId: req.userId!,
             messageId,
             newContent
         });

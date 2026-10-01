@@ -11,7 +11,7 @@ export const getChatDetailController = async (req: Request, res: Response, next:
 
         const chat = await getChatDetailUseCase.execute({
             chatId,
-            userId: 1
+            userId: req.userId!
         });
 
         res.status(200).json(chat)

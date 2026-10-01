@@ -25,7 +25,7 @@ export const createMessageController = async (req: Request, res: Response, next:
 
         const message = await createMessageUseCase.execute({
             chatId,
-            senderId: 2,
+            senderId: req.userId!,
             content,
             multimediaUrl,
         });

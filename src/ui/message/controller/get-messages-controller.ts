@@ -21,7 +21,7 @@ export const getMessagesByChatIdController = async (req: Request, res: Response,
         const { limit, before } = getMessageQueryParamsSchemaValidator.parse(req.query);
         const messages = await getMessagesByChatUseCase.execute({
             chatId,
-            userId: 1,
+            userId: req.userId!,
             before,
             limit
         });
