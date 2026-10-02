@@ -17,7 +17,7 @@ model User {
     contacts         Contacts[]         @relation("UserContacts")
     contactOf        Contacts[]         @relation("UserContactOf")
     chatParticipants ChatParticipants[]
-    mensajes         Mensaje[]
+    mensajes         Message[]
     estados          Estados[]
     views            Views[]
     calls            Call[]
@@ -42,38 +42,43 @@ model Contacts {
     user          User     @relation("UserContacts", fields: [userId], references: [id])
     userContact   User     @relation("UserContactOf", fields: [userContactId], references: [id])
     createdAt     DateTime @default(now())
+
+    @@unique([userId, userContactId])
 }
 
 model Chats {
     id               Int                @id @default(autoincrement())
-    name             String
-    descripcion      String?
-    type             Int
+    name             String?
+    description      String?
+    type             ChatType           @default(INDIVIDUAL)
     createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @updatedAt
     chatParticipants ChatParticipants[]
-    mensajes         Mensaje[]
+    mensajes         Message[]
 }
 
 model ChatParticipants {
-    id        Int      @id @default(autoincrement())
+    id        Int             @id @default(autoincrement())
     userId    Int
     chatId    Int
-    role      Int
-    user      User     @relation(fields: [userId], references: [id])
-    chat      Chats    @relation(fields: [chatId], references: [id])
-    createdAt DateTime @default(now())
+    role      ParticipantRole
+    user      User            @relation(fields: [userId], references: [id])
+    chat      Chats           @relation(fields: [chatId], references: [id])
+    createdAt DateTime        @default(now())
+
+    @@unique([userId, chatId])
 }
 
-model Mensaje {
-    id            Int      @id @default(autoincrement())
+model Message {
+    id            Int         @id @default(autoincrement())
     content       String
-    multimediaUrl String
-    type          Int
+    multimediaUrl String?
+    type          MessageType
     senderId      Int
     chatId        Int
-    createdAt     DateTime @default(now())
-    user          User     @relation(fields: [senderId], references: [id])
-    chat          Chats    @relation(fields: [chatId], references: [id])
+    createdAt     DateTime    @default(now())
+    user          User        @relation(fields: [senderId], references: [id])
+    chat          Chats       @relation(fields: [chatId], references: [id])
 }
 
 model Estados {
@@ -121,4 +126,21 @@ model games {
     description String
     isActive    Float
     createdAt   DateTime @default(now())
+}
+
+enum ParticipantRole {
+    MEMBER
+    ADMIN
+}
+
+enum ChatType {
+    INDIVIDUAL
+    GROUP
+}
+
+enum MessageType {
+    TEXT
+    AUDIO
+    VIDEO
+    IMAGE
 }

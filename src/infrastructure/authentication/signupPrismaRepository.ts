@@ -1,8 +1,8 @@
 //import { PrismaClient } from '@prisma/client';
-import { AuthRepository } from '@/domain/authentication/repositories/authRepository';
+import { AuthRepository, UsersIdInput } from '@/domain/authentication/repositories/authRepository';
 import { signUpUseCaseInput } from '@/domain/authentication/use-cases/signupUseCase';
 import { User } from '@/domain/authentication/User';
-import { prismaClient } from '@/infrastructure/global/PrismaCLient';
+import { prismaClient } from '../global/prismaCLient';
 import { UserFiltrQuery } from '@/domain/authentication/repositories/authRepository';
 
 type PrismaUser = {
@@ -51,6 +51,17 @@ export class SignupPrismaRepository implements AuthRepository {
       },
     });
     return this.restore(newUser);
+  }
+
+  async findUsers(params: UsersIdInput): Promise<User[]> {
+    const usersDb = await this.prisma.user.findMany({
+      where: {
+        id: {
+          in: params.usersIds
+        }
+      }
+    });
+    return usersDb.map((userDb) => this.restore(userDb));
   }
 
   private restore(prismaUser: PrismaUser): User {
