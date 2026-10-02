@@ -2,7 +2,11 @@ import { Chat } from "@/domain/chat/Chat";
 import { Prisma } from "@prisma/client";
 import { ChatType } from "@prisma/client";
 import { ChatRepository, CreateChatData } from "@/domain/chat/repositories/ChatRepository";
-import { prismaClient } from "@/infrastructure/global/PrismaCLient";
+import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { GetChatsByUserUseCaseInput } from "@/domain/chat/use-cases/get-chats-by-user";
+import { Message as PrismaMessage } from "@prisma/client"
+import { LastMessage } from "@/domain/chat/Chat";
+
 
 type PrismaChat = Prisma.ChatsGetPayload<{
     include: {
@@ -10,6 +14,22 @@ type PrismaChat = Prisma.ChatsGetPayload<{
             include: {
                 user: true;
             };
+        };
+    };
+}>;
+
+type PrismaList = Prisma.ChatsGetPayload<{
+    include: {
+        chatParticipants: {
+            include: {
+                user: true;
+            };
+        };
+        mensajes: {
+            orderBy: {
+                createdAt: "desc";
+            };
+            take: 1;
         };
     };
 }>;
@@ -102,6 +122,41 @@ export class PrismaChatRepository implements ChatRepository {
         return this.restore(chat);
     }
 
+    async getChatsByUserId(params: GetChatsByUserUseCaseInput):
+        Promise<Chat[]> {
+        const { limit, userId } = params;
+        const chatsDb = await this.prisma.chats.findMany({
+            where: {
+                chatParticipants: {
+                    some: {
+                        userId,
+                    }
+                }
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true
+                    }
+                },
+                mensajes: {
+                    orderBy: {
+                        createdAt: 'desc',
+                    },
+                    take: 1
+                },
+            },
+            orderBy: {
+                updatedAt: "desc",
+            },
+            take: limit,
+        });
+
+        const chats = chatsDb.map(chatDb => this.restoreChatList(chatDb, userId));
+
+        return chats;
+    }
+
     private restore(prismaChat: PrismaChat): Chat {
         return new Chat({
             id: prismaChat.id,
@@ -115,5 +170,41 @@ export class PrismaChatRepository implements ChatRepository {
                 role: participant.role
             }))
         })
+    }
+
+    private restoreChatList(prismaList: PrismaList, userId: number): Chat {
+        const otherParticipant = prismaList.chatParticipants.find(
+            participant => participant.userId !== userId
+        );
+
+        return new Chat({
+            id: prismaList.id,
+            name: prismaList.type === "INDIVIDUAL"
+                ? otherParticipant?.user.fullname
+                : prismaList.name ?? undefined,
+            description: prismaList.description ?? undefined,
+            type: prismaList.type,
+            createAt: prismaList.createdAt,
+            participants: prismaList.chatParticipants.map((participant) => ({
+                userId: participant.userId,
+                fullname: participant.user.fullname,
+                role: participant.role,
+            })),
+            lastMessage: prismaList.mensajes[0]
+                ? this.restoreLastMessage(prismaList.mensajes[0])
+                : undefined,
+        });
+    }
+
+    private restoreLastMessage(prismaMessage: PrismaMessage): LastMessage {
+        return {
+            id: prismaMessage.id,
+            content: prismaMessage.content,
+            multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
+            type: prismaMessage.type,
+            senderId: prismaMessage.senderId,
+            chatId: prismaMessage.chatId,
+            createdAt: prismaMessage.createdAt,
+        };
     }
 }

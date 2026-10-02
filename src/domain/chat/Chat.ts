@@ -1,5 +1,5 @@
 import { Entity, EntityProps } from "../global/Entity";
-import { ParticipantRole, ChatType } from "@prisma/client";
+import { ParticipantRole, ChatType, MessageType } from "@prisma/client";
 
 export interface ChatParticipant {
     userId: number;
@@ -7,12 +7,25 @@ export interface ChatParticipant {
     role: ParticipantRole;
 }
 
+export interface LastMessage {
+    id: number;
+    content: string;
+    multimediaUrl?: string;
+    type: MessageType;
+    senderId: number;
+    chatId: number;
+    createdAt: Date;
+}
+
+
 export interface PartialChatProps {
     name?: string;
     description?: string;
     type: ChatType;
     participants: ChatParticipant[];
+    lastMessage?: LastMessage;
 }
+
 
 
 type ChatProps = PartialChatProps & EntityProps;
@@ -22,6 +35,8 @@ export class Chat extends Entity {
     readonly description?: string;
     readonly type: ChatType;
     readonly participants: ChatParticipant[];
+    readonly lastMessage?: LastMessage;
+
 
     constructor(props: ChatProps) {
         super({ id: props.id, createAt: props.createAt });
@@ -29,5 +44,6 @@ export class Chat extends Entity {
         this.description = props.description;
         this.type = props.type;
         this.participants = props.participants;
+        this.lastMessage = props.lastMessage
     }
 }

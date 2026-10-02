@@ -1,5 +1,5 @@
 import { MessageData, MessageRepository } from "@/domain/message/repositories/MessageRepository";
-import { prismaClient } from "@/infrastructure/global/PrismaCLient";
+import { prismaClient } from "@/infrastructure/global/prismaCLient";
 import { Message as PrismaMessage } from "@prisma/client";
 import { Message } from "@/domain/message/Message";
 import { EditMessageUseCaseInput } from "@/domain/message/use-cases/edit-message";
@@ -18,6 +18,15 @@ export class PrismaMessageRepository implements MessageRepository {
                 multimediaUrl: params.multimediaUrl,
                 senderId: params.senderId
             }
+        });
+
+        await this.prisma.chats.update({
+            where: {
+                id: params.chatId,
+            },
+            data: {
+                updatedAt: new Date(),
+            },
         });
 
         return this.restore(newMessage);

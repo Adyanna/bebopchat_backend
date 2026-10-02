@@ -1,6 +1,6 @@
 import { ChatType, ParticipantRole } from "@prisma/client";
 import { Chat } from "../Chat"
-import { CreateChatUseCaseInput } from "../use-cases/create-chat";
+import { GetChatsByUserUseCaseInput } from "../use-cases/get-chats-by-user";
 
 
 export interface ChatParticipantData {
@@ -21,4 +21,5 @@ export interface ChatRepository {
     createChat: (chatData: CreateChatData) => Promise<Chat>;
     findChatByIds: (creatorId: number, participantId: number) => Promise<Chat | null>
     findById: (chatId: number) => Promise<Chat | null>
+    getChatsByUserId: (input: GetChatsByUserUseCaseInput) => Promise<Chat[]>
 }
