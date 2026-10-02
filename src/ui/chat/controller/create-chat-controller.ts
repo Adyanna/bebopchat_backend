@@ -1,4 +1,5 @@
 import { CreateChatUseCase } from '@/domain/chat/use-cases/create-chat';
+import { SignupPrismaRepository } from '@/infrastructure/authentication/signupPrismaRepository';
 import { PrismaChatRepository } from '@/infrastructure/chat/repositories/PrismaChatRepository';
 import { NextFunction, Request, Response } from 'express';
 import { length, z } from 'zod';
@@ -15,7 +16,8 @@ export const createChatController = async (req: Request, res: Response, next: Ne
         const { name, description, participantIds } = createChatValidationSquema.parse(req.body);
 
         const prismaChatRepository = new PrismaChatRepository();
-        const createChatUseCase = new CreateChatUseCase(prismaChatRepository)
+        const prismaAuthRepository = new SignupPrismaRepository();
+        const createChatUseCase = new CreateChatUseCase(prismaChatRepository, prismaAuthRepository);
 
         const { chat, isNew } = await createChatUseCase.execute({
             creatorId: req.userId!,

@@ -2,6 +2,7 @@ import { ChatType, ParticipantRole } from "@prisma/client";
 import { Chat } from "../Chat";
 import { ChatRepository } from "../repositories/ChatRepository";
 import { InvalidOperationError, ValidationError } from "@/domain/errors/ValidationError";
+import { AuthRepository } from "@/domain/authentication/repositories/authRepository";
 
 
 export interface CreateChatUseCaseInput {
@@ -14,7 +15,8 @@ export interface CreateChatUseCaseInput {
 export class CreateChatUseCase {
 
     constructor(
-        private readonly chatRepository: ChatRepository
+        private readonly chatRepository: ChatRepository,
+        private readonly authRepository: AuthRepository
     ) { }
 
     async execute(input: CreateChatUseCaseInput): Promise<{ chat: Chat, isNew: boolean }> {
@@ -37,14 +39,11 @@ export class CreateChatUseCase {
 
         if (existingChat) return { chat: existingChat, isNew: false };
 
+        const users = await this.authRepository.findUsers({ usersIds: input.participantIds });
 
-        //TODO: validate that all participants exist
-        //this will be integrated with userRepository
-        //const users = await this.userRepository.findByIds(input.participantIds);
-
-        //if (users.length !== input.participantIds.length) {
-        //  throw new Error("One or more participants do not exists");
-        //}
+        if (users.length !== input.participantIds.length) {
+            throw new InvalidOperationError("One or more participants do not exists");
+        }
 
         const participants = [
             { userId: input.creatorId, role: ParticipantRole.ADMIN },
