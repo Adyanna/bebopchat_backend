@@ -6,6 +6,7 @@ export interface PartialMessageProps {
     content: string;
     multimediaUrl?: string;
     type: MessageType;
+    updatedAt: Date;
 }
 
 type MessageProps = PartialMessageProps & EntityProps & {
@@ -19,6 +20,7 @@ export class Message extends Entity {
     readonly type: MessageType;
     readonly chatId: number;
     readonly senderId: number;
+    readonly updatedAt: Date;
 
     constructor(props: MessageProps) {
         super({ id: props.id, createAt: props.createAt });
@@ -27,5 +29,6 @@ export class Message extends Entity {
         this.type = props.type;
         this.chatId = props.chatId;
         this.senderId = props.senderId;
+        this.updatedAt = props.updatedAt;
     }
 }
