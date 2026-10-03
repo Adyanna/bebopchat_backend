@@ -24,6 +24,7 @@ export interface PartialChatProps {
     type: ChatType;
     participants: ChatParticipant[];
     lastMessage?: LastMessage;
+    updatedAt?: Date;
 }
 
 
@@ -36,6 +37,7 @@ export class Chat extends Entity {
     readonly type: ChatType;
     readonly participants: ChatParticipant[];
     readonly lastMessage?: LastMessage;
+    readonly updatedAt?: Date;
 
 
     constructor(props: ChatProps) {
@@ -44,6 +46,7 @@ export class Chat extends Entity {
         this.description = props.description;
         this.type = props.type;
         this.participants = props.participants;
-        this.lastMessage = props.lastMessage
+        this.lastMessage = props.lastMessage;
+        this.updatedAt = props.updatedAt;
     }
 }

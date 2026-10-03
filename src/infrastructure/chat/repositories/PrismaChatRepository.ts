@@ -193,6 +193,7 @@ export class PrismaChatRepository implements ChatRepository {
             lastMessage: prismaList.mensajes[0]
                 ? this.restoreLastMessage(prismaList.mensajes[0])
                 : undefined,
+            updatedAt: prismaList.updatedAt
         });
     }
 
