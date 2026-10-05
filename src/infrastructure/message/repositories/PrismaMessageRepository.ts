@@ -100,7 +100,8 @@ export class PrismaMessageRepository implements MessageRepository {
             type: prismaMessage.type,
             chatId: prismaMessage.chatId,
             senderId: prismaMessage.senderId,
-            createAt: prismaMessage.createdAt
+            createAt: prismaMessage.createdAt,
+            updatedAt: prismaMessage.updatedAt
         });
     }
 }
