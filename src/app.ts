@@ -6,8 +6,9 @@ import { healthRoute } from '@/ui/health/route/HealthRoute';
 import { chatRouter } from './ui/chat/routes/chat-router';
 import { authRoute } from '@/ui/authentication/route/authRoute';
 import { profileRoute } from '@/ui/profile/route/profileRoute';
-import { userRouter } from './ui/chat/routes/me-router';
+import { userChatsRouter } from './ui/chat/routes/me-router';
 import { uploadRoute } from './ui/upload/route/uploadRoute';
+import { userRouter } from './ui/users/routes/users-router';
 
 const app = express();
 
@@ -23,9 +24,10 @@ app.use((req, res, next) => {
 app.use('/', healthRoute);
 app.use('/auth', authRoute);
 app.use('/profile', profileRoute);
+app.use("/users", userChatsRouter);
 app.use("/users", userRouter);
 app.use('/chats', chatRouter);
-app.use('/upload',uploadRoute)
+app.use('/upload', uploadRoute)
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
