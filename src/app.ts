@@ -6,7 +6,6 @@ import { healthRoute } from '@/ui/health/route/HealthRoute';
 import { chatRouter } from './ui/chat/routes/chat-router';
 import { authRoute } from '@/ui/authentication/route/authRoute';
 import { profileRoute } from '@/ui/profile/route/profileRoute';
-import { userChatsRouter } from './ui/chat/routes/me-router';
 import { uploadRoute } from './ui/upload/route/uploadRoute';
 import { userRouter } from './ui/users/routes/users-router';
 
@@ -24,7 +23,6 @@ app.use((req, res, next) => {
 app.use('/', healthRoute);
 app.use('/auth', authRoute);
 app.use('/profile', profileRoute);
-app.use("/users", userChatsRouter);
 app.use("/users", userRouter);
 app.use('/chats', chatRouter);
 app.use('/upload', uploadRoute)
