@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { NextFunction, Request, Response } from 'express';
-import { PrismaUserRepository } from "@/infrastructure/users/PrismaUserRepository";
-import { SearchUserUseCase } from "@/domain/users/use-cases/SearchUserUseCase";
+import { PrismaUserRepository } from "@/infrastructure/users/repositories/PrismaUserRepository";
+import { SearchUserUseCase } from "@/domain/users/use-cases/search-user-use-case";
 
 
 const searchUserValidationSquema = z.object({
@@ -10,7 +10,7 @@ const searchUserValidationSquema = z.object({
 
 export const searchUserController = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const { phone } = searchUserValidationSquema.parse(req.body);
+        const { phone } = searchUserValidationSquema.parse(req.query);
 
         const prismaUserRepository = new PrismaUserRepository();
         const searchUserUseCase = new SearchUserUseCase(prismaUserRepository);
