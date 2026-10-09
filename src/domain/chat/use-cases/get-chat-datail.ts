@@ -26,7 +26,7 @@ export class GetChatDetailUseCase {
             some((paricipant) => paricipant.userId === input.userId);
 
         if (!userIsParticipant) {
-            throw new UnauthorizedError("Your not a participant in this chat");
+            throw new UnauthorizedError("You're not a participant in this chat");
         }
 
         return chat;

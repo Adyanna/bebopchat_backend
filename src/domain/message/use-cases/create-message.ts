@@ -28,7 +28,7 @@ export class CreateMessageUseCase {
             some((paricipant) => paricipant.userId === input.senderId);
 
         if (!userIsParticipant) {
-            throw new UnauthorizedError("Your not a participant in this chat");
+            throw new UnauthorizedError("You're not a participant in this chat");
         }
 
         const type = getMessageType({ multimediaUrl: input.multimediaUrl });

@@ -1,4 +1,3 @@
-import { GetMessagesByChatUseCase } from "@/domain/message/use-cases/get-messages";
 import { PrismaChatRepository } from "@/infrastructure/chat/repositories/PrismaChatRepository";
 import { NextFunction, Request, Response } from "express";
 import { CursorPaginatedResponse } from "../../global/types/CursorPaginatedResponse"
