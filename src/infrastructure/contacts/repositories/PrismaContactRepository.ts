@@ -4,6 +4,7 @@ import { Contact } from "@/domain/contacts/Contact";
 import { Contacts as PrismaContact } from "@prisma/client";
 import { GetUserContactsResult, GetUserContactsUseCaseInput, UserContact } from "@/domain/contacts/use-cases/get-user-contacts";
 import { SearchContactUseCaseInput } from "@/domain/contacts/use-cases/search-contact-use-case";
+import { DeleteContactUseCaseInput } from "@/domain/contacts/use-cases/delete-contact-use-case";
 
 export class PrismaContactRepository {
     private readonly prisma = prismaClient;
@@ -135,6 +136,17 @@ export class PrismaContactRepository {
             hasMore,
             nextBefore
         };
+    }
+
+    async delete(params: DeleteContactUseCaseInput): Promise<void> {
+        await this.prisma.contacts.delete({
+            where: {
+                userId_userContactId: {
+                    userId: params.userId,
+                    userContactId: params.userContactId
+                }
+            }
+        });
     }
 
     private restore(prismaContact: PrismaContact): Contact {
