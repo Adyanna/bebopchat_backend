@@ -6,6 +6,7 @@ import { GetUserContactsUseCase } from "@/domain/contacts/use-cases/get-user-con
 const getContactsQueryParamsSchemaValidator = z.object({
     limit: z.coerce.number().positive().max(100).default(30),
     before: z.coerce.number().positive().optional(),
+    search: z.string().trim().optional(),
 });
 
 export const getUserContactsController = async (req: Request, res: Response, next: NextFunction) => {
@@ -13,11 +14,12 @@ export const getUserContactsController = async (req: Request, res: Response, nex
     const getUserContactsUseCase = new GetUserContactsUseCase(prismaContactRepository)
 
     try {
-        const { limit, before } = getContactsQueryParamsSchemaValidator.parse(req.query);
+        const { limit, before, search } = getContactsQueryParamsSchemaValidator.parse(req.query);
         const { data, hasMore, nextBefore } = await getUserContactsUseCase.execute({
             userId: req.userId!,
+            search,
             before,
-            limit
+            limit,
         });
 
         const response = {

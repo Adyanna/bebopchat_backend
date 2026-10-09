@@ -3,7 +3,6 @@ import { prismaClient } from "@/infrastructure/global/prismaCLient";
 import { Contact } from "@/domain/contacts/Contact";
 import { Contacts as PrismaContact } from "@prisma/client";
 import { GetUserContactsResult, GetUserContactsUseCaseInput, UserContact } from "@/domain/contacts/use-cases/get-user-contacts";
-import { SearchContactUseCaseInput } from "@/domain/contacts/use-cases/search-contact-use-case";
 import { DeleteContactUseCaseInput } from "@/domain/contacts/use-cases/delete-contact-use-case";
 
 export class PrismaContactRepository {
@@ -38,105 +37,65 @@ export class PrismaContactRepository {
 
     async getContactsByUserId(params: GetUserContactsUseCaseInput):
         Promise<GetUserContactsResult> {
-        const { limit, userId, before } = params;
+
+        const { limit, userId, before, search } = params;
+
         const contactsDb = await this.prisma.contacts.findMany({
             where: {
                 userId,
                 ...(before && {
                     id: {
-                        lt: before
-                    }
-                })
+                        lt: before,
+                    },
+                }),
+                ...(search && {
+                    userContact: {
+                        OR: [
+                            {
+                                fullname: {
+                                    contains: search,
+                                    mode: 'insensitive',
+                                },
+                            },
+                            {
+                                phone: {
+                                    contains: search,
+                                },
+                            },
+                        ],
+                    },
+                }),
             },
             include: {
                 userContact: true,
             },
             orderBy: {
-                id: 'desc'
+                id: 'desc',
             },
-            take: limit + 1,
-        })
-
-        const userContacts = contactsDb.map(contactDb => ({
-            contactId: contactDb.id,
-            userContactId: contactDb.userContactId,
-            phone: contactDb.userContact.phone,
-            fullname: contactDb.userContact.fullname
-        }));
-
-        const hasMore = userContacts.length === limit + 1;
-        const data = userContacts.slice(0, limit);
-        const nextBefore = hasMore ? data.at(-1)?.contactId : undefined;
-
-        return {
-            data,
-            hasMore,
-            nextBefore
-        };
-    }
-
-    async getContacts(params: SearchContactUseCaseInput):
-        Promise<GetUserContactsResult> {
-        const { limit, userId, before } = params;
-
-
-        const contactsDb = await this.prisma.contacts.findMany({
-            where: {
-                userId,
-
-                ...(before !== undefined && {
-                    id: {
-                        lt: before
-                    }
-                }),
-
-                userContact: {
-                    is: {
-                        OR: [
-                            {
-                                phone: {
-                                    contains: params.search
-                                }
-                            },
-                            {
-                                fullname: {
-                                    contains: params.search,
-                                    mode: 'insensitive'
-                                }
-                            }
-                        ]
-                    }
-                }
-            },
-
-            include: {
-                userContact: true
-            },
-
-            orderBy: {
-                id: 'desc'
-            },
-
             take: limit + 1,
         });
 
-        const userContacts = contactsDb.map(contactDb => ({
+        const userContacts = contactsDb.map((contactDb) => ({
             contactId: contactDb.id,
             userContactId: contactDb.userContactId,
             phone: contactDb.userContact.phone,
-            fullname: contactDb.userContact.fullname
+            fullname: contactDb.userContact.fullname,
         }));
 
         const hasMore = userContacts.length === limit + 1;
         const data = userContacts.slice(0, limit);
-        const nextBefore = hasMore ? data.at(-1)?.contactId : undefined;
+        const nextBefore = hasMore
+            ? data.at(-1)?.contactId
+            : undefined;
 
         return {
             data,
             hasMore,
-            nextBefore
+            nextBefore,
         };
     }
+
+
 
     async delete(params: DeleteContactUseCaseInput): Promise<void> {
         await this.prisma.contacts.delete({

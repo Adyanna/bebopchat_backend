@@ -3,6 +3,7 @@ import { Pagination } from "@/domain/global/Pagination";
 
 export type GetUserContactsUseCaseInput = Pagination & {
     userId: number;
+    search?: string
 };
 
 export interface UserContact {
