@@ -7,16 +7,23 @@ import { User as PrismaUser } from "@prisma/client";
 export class PrismaUserRepository implements UserRepository {
     private readonly prisma = prismaClient;
 
-    async findUserByPhone(phone: string): Promise<User | null> {
+    async findUserByPhone(phone: string): Promise<{ user: User, profilePicture: string | null } | null> {
+
         const user = await this.prisma.user.findUnique({
             where: {
                 phone: phone,
+            },
+            include: {
+                perfil: true
             }
         });
 
         if (!user) return null
 
-        return this.restore(user)
+        return {
+            user: this.restore(user),
+            profilePicture: user.perfil?.photoUrl ?? null
+        }
 
     }
 
