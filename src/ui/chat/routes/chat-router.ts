@@ -6,7 +6,7 @@ import { deleteMessageController } from "@/ui/message/controller/delete-message-
 import { getMessagesByChatIdController } from "@/ui/message/controller/get-messages-controller";
 import { getChatDetailController } from "../controller/get-chat-detail-controller";
 import { authenticationMiddleware } from "@/ui/global/middleware/authMiddleware";
-
+import { updateGroupChatController } from "../controller/updateGroupChatController";
 
 export const chatRouter = Router();
 
@@ -16,3 +16,4 @@ chatRouter.get('/:id/messages', [authenticationMiddleware, getMessagesByChatIdCo
 chatRouter.post('/:id/messages', [authenticationMiddleware, createMessageController]);
 chatRouter.patch('/:id/messages/:messageId', [authenticationMiddleware, editMessageController]);
 chatRouter.delete('/:id/messages/:messageId', [authenticationMiddleware, deleteMessageController]);
+chatRouter.patch("/:id", [authenticationMiddleware, updateGroupChatController]);
