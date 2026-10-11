@@ -27,5 +27,5 @@ export interface ChatRepository {
     findById: (chatId: number) => Promise<Chat | null>
     getChatsByUserId: (input: GetChatsByUserUseCaseInput) => Promise<Chat[]>
     updateGroupChat: (data: UpdateGroupChatData) => Promise<Chat>;
-    // removeParticipant: (chatId: number, userId: number) => Promise<void>;
+    removeParticipant: (chatId: number, userId: number) => Promise<void>;
 }

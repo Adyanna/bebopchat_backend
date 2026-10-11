@@ -184,6 +184,20 @@ export class PrismaChatRepository implements ChatRepository {
         return this.restore(updatedChat);
     }
 
+    async removeParticipant(
+        chatId: number,
+        userId: number
+    ): Promise<void> {
+        await this.prisma.chatParticipants.delete({
+            where: {
+                userId_chatId: {
+                    userId,
+                    chatId,
+                },
+            },
+        });
+    }
+
 
     private restore(prismaChat: PrismaChat): Chat {
         return new Chat({
