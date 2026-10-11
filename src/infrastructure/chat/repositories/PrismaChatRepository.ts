@@ -147,7 +147,7 @@ export class PrismaChatRepository implements ChatRepository {
                 },
             },
             orderBy: {
-                updatedAt: "desc",
+                lastActivityAt: "desc",
             },
             take: limit,
         });
