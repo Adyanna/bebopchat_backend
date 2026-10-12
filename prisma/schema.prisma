@@ -71,9 +71,11 @@ model ChatParticipants {
 
 model Message {
     id            Int         @id @default(autoincrement())
-    content       String
+    content       String?
     multimediaUrl String?
     type          MessageType
+    status        StatusType  @default(SEND)
+    viewedBy      String      @default("")
     senderId      Int
     chatId        Int
     createdAt     DateTime    @default(now())
@@ -144,4 +146,10 @@ enum MessageType {
     AUDIO
     VIDEO
     IMAGE
+}
+
+enum StatusType {
+    SEND
+    RECIBE
+    VIEW
 }
