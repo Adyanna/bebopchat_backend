@@ -2,7 +2,7 @@ import { Chat } from "@/domain/chat/Chat";
 import { Prisma } from "@prisma/client";
 import { ChatType } from "@prisma/client";
 import { ChatRepository, CreateChatData } from "@/domain/chat/repositories/ChatRepository";
-import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { prismaClient } from "@/infrastructure/global/PrismaCLient"
 import { GetChatsByUserUseCaseInput } from "@/domain/chat/use-cases/get-chats-by-user";
 import { Message as PrismaMessage } from "@prisma/client"
 import { LastMessage } from "@/domain/chat/Chat";
@@ -200,7 +200,7 @@ export class PrismaChatRepository implements ChatRepository {
     private restoreLastMessage(prismaMessage: PrismaMessage): LastMessage {
         return {
             id: prismaMessage.id,
-            content: prismaMessage.content,
+            content: prismaMessage.content ?? undefined,
             multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
             type: prismaMessage.type,
             senderId: prismaMessage.senderId,

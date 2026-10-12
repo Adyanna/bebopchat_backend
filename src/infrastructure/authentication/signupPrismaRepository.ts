@@ -2,7 +2,7 @@
 import { AuthRepository, UsersIdInput } from '@/domain/authentication/repositories/authRepository';
 import { signUpUseCaseInput } from '@/domain/authentication/use-cases/signupUseCase';
 import { User } from '@/domain/authentication/User';
-import { prismaClient } from '../global/prismaCLient';
+import { prismaClient } from "@/infrastructure/global/PrismaCLient"
 import { UserFiltrQuery } from '@/domain/authentication/repositories/authRepository';
 
 type PrismaUser = {

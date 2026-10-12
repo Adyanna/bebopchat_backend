@@ -1,5 +1,5 @@
 import { HealthRepository } from '@/domain/health/repository/HealthRepository';
-import { prismaClient } from '@/infrastructure/global/prismaCLient'
+import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 export class HealthPrismaRepository implements HealthRepository {
   private readonly prisma = prismaClient;
 

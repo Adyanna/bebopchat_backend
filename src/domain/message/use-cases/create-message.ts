@@ -9,7 +9,7 @@ export interface CreateMessageUseCaseInput {
     chatId: number;
     senderId: number;
     multimediaUrl?: string;
-    content: string;
+    content?: string;
 }
 
 export class CreateMessageUseCase {

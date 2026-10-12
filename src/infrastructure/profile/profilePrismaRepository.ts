@@ -6,7 +6,7 @@ import {
   ProfileFindParams,
 } from '@/domain/profile/repositories/profileRepository';
 import { Profile } from '@/domain/profile/profile';
-import { prismaClient } from '../global/PrismaCLient';
+import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 
 export class ProfilePrismaRepository implements ProfileRepository {
   private readonly prisma = prismaClient;
@@ -82,7 +82,6 @@ export class ProfilePrismaRepository implements ProfileRepository {
   }
 
   async findUserWithProfile(params: ProfileFindParams) {
-    console.log("INFRAESTRUCTURA:", params)
     const user = await this.prisma.user.findUnique({
       where: {
         id: params.userId,
