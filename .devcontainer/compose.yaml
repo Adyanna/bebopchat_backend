@@ -1,3 +1,4 @@
+
 services:
   devcontainer:
     build:
@@ -8,19 +9,30 @@ services:
       - ../uploads:/workspace/uploads
     command: sleep infinity
 
+  backend:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    ports:
+      - "3001:3001"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     image: postgres:16
+    restart: unless-stopped
     environment:
       POSTGRES_DB: bebopchat
       POSTGRES_USER: bebopchat
       POSTGRES_PASSWORD: bebopchat
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
-
     ports:
       - "5438:5432"
-    
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bebopchat -d bebopchat"]
       interval: 5s
