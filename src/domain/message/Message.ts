@@ -3,7 +3,7 @@ import { EntityProps, Entity } from "../global/Entity";
 
 
 export interface PartialMessageProps {
-    content: string;
+    content?: string;
     multimediaUrl?: string;
     type: MessageType;
     updatedAt: Date;
@@ -15,7 +15,7 @@ type MessageProps = PartialMessageProps & EntityProps & {
 };
 
 export class Message extends Entity {
-    readonly content: string;
+    readonly content?: string | null;
     readonly multimediaUrl?: string;
     readonly type: MessageType;
     readonly chatId: number;

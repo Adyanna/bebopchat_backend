@@ -6,7 +6,7 @@ import {
   ProfileFindParams,
 } from '@/domain/profile/repositories/profileRepository';
 import { Profile } from '@/domain/profile/profile';
-import { prismaClient } from '../global/PrismaCLient';
+import { prismaClient } from '@/infrastructure/global/ConfigClientPrisma'
 
 export class ProfilePrismaRepository implements ProfileRepository {
   private readonly prisma = prismaClient;

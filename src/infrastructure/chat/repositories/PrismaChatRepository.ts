@@ -2,7 +2,7 @@ import { Chat } from "@/domain/chat/Chat";
 import { Prisma } from "@prisma/client";
 import { ChatType } from "@prisma/client";
 import { ChatRepository, CreateChatData } from "@/domain/chat/repositories/ChatRepository";
-import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { prismaClient } from "@/infrastructure/global/ConfigClientPrisma";
 import { GetChatsByUserUseCaseInput } from "@/domain/chat/use-cases/get-chats-by-user";
 import { Message as PrismaMessage } from "@prisma/client"
 import { LastMessage } from "@/domain/chat/Chat";

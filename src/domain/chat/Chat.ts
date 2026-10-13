@@ -9,7 +9,7 @@ export interface ChatParticipant {
 
 export interface LastMessage {
     id: number;
-    content: string;
+    content?: string | null;
     multimediaUrl?: string;
     type: MessageType;
     senderId: number;

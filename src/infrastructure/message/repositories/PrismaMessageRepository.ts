@@ -1,5 +1,5 @@
 import { MessageData, MessageRepository } from "@/domain/message/repositories/MessageRepository";
-import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { prismaClient } from "@/infrastructure/global/ConfigClientPrisma";
 import { Message as PrismaMessage } from "@prisma/client";
 import { Message } from "@/domain/message/Message";
 import { EditMessageUseCaseInput } from "@/domain/message/use-cases/edit-message";
@@ -95,7 +95,7 @@ export class PrismaMessageRepository implements MessageRepository {
     private restore(prismaMessage: PrismaMessage): Message {
         return new Message({
             id: prismaMessage.id,
-            content: prismaMessage.content,
+            content: prismaMessage.content ?? undefined,
             multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
             type: prismaMessage.type,
             chatId: prismaMessage.chatId,
