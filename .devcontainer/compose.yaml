@@ -25,10 +25,8 @@ services:
   postgres:
     image: postgres:16
     restart: unless-stopped
-    environment:
-      POSTGRES_DB: bebopchat
-      POSTGRES_USER: bebopchat
-      POSTGRES_PASSWORD: bebopchat
+    env_file:
+      - ../.env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
