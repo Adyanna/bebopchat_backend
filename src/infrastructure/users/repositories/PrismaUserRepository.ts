@@ -1,6 +1,6 @@
 import { User } from "@/domain/authentication/User";
 import { UserRepository } from "@/domain/users/repositories/UserRepository";
-import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 import { User as PrismaUser } from "@prisma/client";
 
 

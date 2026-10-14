@@ -1,5 +1,5 @@
 import { AddContactUseCaseInput } from "@/domain/contacts/use-cases/add-contact-use-case";
-import { prismaClient } from "@/infrastructure/global/prismaCLient";
+import { prismaClient } from "@/infrastructure/global/PrismaCLient";
 import { Contact } from "@/domain/contacts/Contact";
 import { Contacts as PrismaContact } from "@prisma/client";
 import { GetUserContactsResult, GetUserContactsUseCaseInput, UserContact } from "@/domain/contacts/use-cases/get-user-contacts";
