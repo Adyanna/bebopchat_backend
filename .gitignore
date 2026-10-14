@@ -6,3 +6,5 @@ node_modules
 .devin
 uploads
 .vscode
+
+dist/
