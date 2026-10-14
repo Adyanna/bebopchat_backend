@@ -6,6 +6,7 @@ import { prismaClient } from "@/infrastructure/global/PrismaCLient"
 import { GetChatsByUserUseCaseInput } from "@/domain/chat/use-cases/get-chats-by-user";
 import { Message as PrismaMessage } from "@prisma/client"
 import { LastMessage } from "@/domain/chat/Chat";
+import { UpdateGroupChatData } from "@/domain/chat/repositories/ChatRepository";
 
 
 type PrismaChat = Prisma.ChatsGetPayload<{
@@ -147,7 +148,7 @@ export class PrismaChatRepository implements ChatRepository {
                 },
             },
             orderBy: {
-                updatedAt: "desc",
+                lastActivityAt: "desc",
             },
             take: limit,
         });
@@ -156,6 +157,47 @@ export class PrismaChatRepository implements ChatRepository {
 
         return chats;
     }
+
+
+    async updateGroupChat(
+        data: UpdateGroupChatData
+    ): Promise<Chat> {
+        const updatedChat = await this.prisma.chats.update({
+            where: {
+                id: data.chatId,
+            },
+            data: {
+                ...(data.name !== undefined && { name: data.name.trim() }),
+                ...(data.description !== undefined && {
+                    description: data.description,
+                }),
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true,
+                    },
+                },
+            },
+        });
+
+        return this.restore(updatedChat);
+    }
+
+    async removeParticipant(
+        chatId: number,
+        userId: number
+    ): Promise<void> {
+        await this.prisma.chatParticipants.delete({
+            where: {
+                userId_chatId: {
+                    userId,
+                    chatId,
+                },
+            },
+        });
+    }
+
 
     private restore(prismaChat: PrismaChat): Chat {
         return new Chat({

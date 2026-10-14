@@ -15,12 +15,13 @@ export const searchUserController = async (req: Request, res: Response, next: Ne
         const prismaUserRepository = new PrismaUserRepository();
         const searchUserUseCase = new SearchUserUseCase(prismaUserRepository);
 
-        const user = await searchUserUseCase.execute(phone);
+        const { user, profilePicture } = await searchUserUseCase.execute(phone);
 
         const response = {
             id: user.id,
             fullname: user.fullname,
-            phone: user.phone
+            phone: user.phone,
+            profilePicture
         }
 
         res.status(200).json(response);

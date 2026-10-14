@@ -8,6 +8,8 @@ import { getChatDetailController } from "../controller/get-chat-detail-controlle
 import { authenticationMiddleware } from "@/ui/global/middleware/authMiddleware";
 import { updateMessageStatusController } from "@/ui/message/controller/update-messages-status-controller";
 
+import { updateGroupChatController } from "../controller/updateGroupChatController";
+import { removeGroupParticipantController } from "../controller/remove-group-participant-controller";
 
 export const chatRouter = Router();
 
@@ -21,3 +23,5 @@ chatRouter.post('/:id/messages', [authenticationMiddleware, createMessageControl
 chatRouter.patch('/:id/messages/:messageId/status', [authenticationMiddleware, updateMessageStatusController]);
 chatRouter.patch('/:id/messages/:messageId', [authenticationMiddleware, editMessageController]);
 chatRouter.delete('/:id/messages/:messageId', [authenticationMiddleware, deleteMessageController]);
+chatRouter.patch("/:id", [authenticationMiddleware, updateGroupChatController]);
+chatRouter.delete("/:id/participants/:userId", [authenticationMiddleware, removeGroupParticipantController]);

@@ -14,7 +14,11 @@ export interface CreateChatData {
     type: ChatType;
     chatParticipants: ChatParticipantData[];
 }
-
+export interface UpdateGroupChatData {
+    chatId: number;
+    name?: string;
+    description?: string;
+}
 
 
 export interface ChatRepository {
@@ -22,4 +26,6 @@ export interface ChatRepository {
     findChatByIds: (creatorId: number, participantId: number) => Promise<Chat | null>
     findById: (chatId: number) => Promise<Chat | null>
     getChatsByUserId: (input: GetChatsByUserUseCaseInput) => Promise<Chat[]>
+    updateGroupChat: (data: UpdateGroupChatData) => Promise<Chat>;
+    removeParticipant: (chatId: number, userId: number) => Promise<void>;
 }

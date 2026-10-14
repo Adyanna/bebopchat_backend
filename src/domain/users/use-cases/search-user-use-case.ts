@@ -9,14 +9,17 @@ export class SearchUserUseCase {
         private readonly userRepository: UserRepository
     ) { }
 
-    async execute(phone: string): Promise<User> {
+    async execute(phone: string): Promise<{ user: User, profilePicture: string | null }> {
 
-        const user = await this.userRepository.findUserByPhone(phone);
+        const result = await this.userRepository.findUserByPhone(phone);
 
-        if (!user) {
+        if (!result) {
             throw new EntityNotFoundError('User', phone.toString());
         }
 
-        return user;
+        return {
+            user: result.user,
+            profilePicture: result.profilePicture
+        };
     }
 }

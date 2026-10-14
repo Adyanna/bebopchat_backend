@@ -10,23 +10,28 @@ export class PrismaMessageRepository implements MessageRepository {
     private readonly prisma = prismaClient;
 
     async createMessage(params: MessageData): Promise<Message> {
-        const newMessage = await this.prisma.message.create({
-            data: {
-                chatId: params.chatId,
-                content: params.content,
-                type: params.type,
-                multimediaUrl: params.multimediaUrl,
-                senderId: params.senderId
-            }
-        });
+        const newMessage = await this.prisma.$transaction(async (tx) => {
+            const message = await tx.message.create({
+                data: {
+                    chatId: params.chatId,
+                    content: params.content,
+                    type: params.type,
+                    multimediaUrl: params.multimediaUrl,
+                    senderId: params.senderId,
+                },
+            });
 
-        await this.prisma.chats.update({
-            where: {
-                id: params.chatId,
-            },
-            data: {
-                updatedAt: new Date(),
-            },
+            await tx.chats.update({
+                where: {
+                    id: params.chatId,
+                },
+                data: {
+                    lastMessageAt: message.createdAt,
+                    lastActivityAt: message.createdAt,
+                },
+            });
+
+            return message;
         });
 
         return this.restore(newMessage);

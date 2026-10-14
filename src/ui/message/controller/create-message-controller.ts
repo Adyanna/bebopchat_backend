@@ -5,8 +5,6 @@ import { NextFunction, Request, Response } from "express";
 import { createMessageValidationSquema } from "@/ui/message/schemas/messageSchema";
 import { io } from '@/app';
 
-
-
 export const createMessageController = async (req: Request, res: Response, next: NextFunction) => {
 
 
