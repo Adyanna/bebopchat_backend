@@ -115,7 +115,7 @@ export class PrismaMessageRepository implements MessageRepository {
                 },
             },
         });
-        
+
         if (!message) {
             throw new Error("Mensaje no encontrado");
         }

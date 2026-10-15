@@ -8,14 +8,14 @@ export const registerChatSocket =  (io: Server) => {
   io.on('connection',async (socket: Socket) => {
     console.log(`⚡ Conexión establecida. Socket ID: ${socket.id}`);
     console.log('Usuario autenticado:', socket.data.userId);
-    
+
     const userId = socket.data.userId;
     console.log('Usuario autenticado:', userId);
       // Vincular el usuario con su conexión
     socket.join(`user:${userId}`);
     console.log(`Usuario ${userId} vinculado a su conexión`);
 
-    //ACTUALIZA TODOS LOS MENSAJES QUE ESTAN EN SEND A RECIBE 
+    //ACTUALIZA TODOS LOS MENSAJES QUE ESTAN EN SEND A RECIBE
     // POR QUE EL USUARIO SE CONECTO
     const messageRepository = new PrismaMessageRepository();
     const updatePendingMessagesUseCase =new UpdatePendingMessagesUseCase(messageRepository);
@@ -40,7 +40,7 @@ export const registerChatSocket =  (io: Server) => {
             message: 'No se pudieron actualizar los mensajes pendientes',
         });
     }
-    
+
     socket.on('join_conversation', async (chatId: string) => {
       // socket.join(chatId);
 
