@@ -1,3 +1,4 @@
+
 name: Deploy BebopChat Backend
 
 on:
@@ -7,19 +8,15 @@ on:
 
 jobs:
   deploy:
-    name: Deploy to EC2
-    runs-on: ubuntu-latest
+    name: Deploy on EC2
+    runs-on: self-hosted
 
     steps:
-      - name: Deploy through SSH
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            set -e
-            cd /home/ubuntu/bebopchat_backend
-            git fetch origin task/deploy
-            git reset --hard origin/task/deploy
-            sudo docker compose -f .devcontainer/compose.yaml up -d --build backend
+      - name: Update repository and deploy backend
+        shell: bash
+        run: |
+          set -e
+          cd /home/ubuntu/bebopchat_backend
+          git fetch origin task/deploy
+          git reset --hard origin/task/deploy
+          sudo docker compose -f .devcontainer/compose.yaml up -d --build backend
