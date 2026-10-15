@@ -9,7 +9,6 @@ import { viewProfileController } from '../controllers/viewProfileController';
 
 export const profileRoute = Router();
 
-console.log("ingresa ruta")
 // Crear perfil
 profileRoute.post('/', authenticationMiddleware, createProfileController);
 

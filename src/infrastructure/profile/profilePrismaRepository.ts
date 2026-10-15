@@ -82,7 +82,6 @@ export class ProfilePrismaRepository implements ProfileRepository {
   }
 
   async findUserWithProfile(params: ProfileFindParams) {
-    console.log("INFRAESTRUCTURA:", params)
     const user = await this.prisma.user.findUnique({
       where: {
         id: params.userId,

@@ -3,6 +3,7 @@ import { Message } from "../Message";
 import { CreateMessageUseCaseInput } from "../use-cases/create-message";
 import { EditMessageUseCaseInput } from "../use-cases/edit-message";
 import { GetMessagesByChatInput } from "../use-cases/get-messages";
+import { StatusType } from "@prisma/client";
 
 
 export type MessageData = CreateMessageUseCaseInput & {
@@ -15,4 +16,6 @@ export interface MessageRepository {
     findById: (messageId: number) => Promise<Message | null>
     deleteMessage: (id: number) => Promise<void>;
     getMessagesByChatId: (params: GetMessagesByChatInput) => Promise<Message[]>
+    updateMessageStatus(messageId: number,status: StatusType,userid:Number): Promise<{message: Message;chatType: string;}>;
+    updatePendingMessages(userId: number): Promise<Message[]>;
 }

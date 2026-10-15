@@ -27,7 +27,7 @@ export function getMessageType({
         return MessageType.VIDEO;
     }
 
-    if (["mp3", "ogg", "wav"].includes(ext)) {
+    if (["mp3", "ogg", "wav", "webm"].includes(ext)) {
         return MessageType.AUDIO;
     }
 

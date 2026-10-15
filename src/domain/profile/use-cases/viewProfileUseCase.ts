@@ -21,7 +21,6 @@ export class ViewProfileUseCase {
 
   async executeViewProfile(userId: number): Promise<ProfileWithUser> {
 
-        console.log("CASO DE USO: ",userId)
     const user = await this.profileRepository.findUserWithProfile({
       userId,
     });

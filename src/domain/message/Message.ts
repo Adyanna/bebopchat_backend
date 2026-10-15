@@ -1,4 +1,4 @@
-import { MessageType } from "@prisma/client";
+import { MessageType,StatusType } from "@prisma/client";
 import { EntityProps, Entity } from "../global/Entity";
 
 
@@ -7,6 +7,7 @@ export interface PartialMessageProps {
     multimediaUrl?: string;
     type: MessageType;
     updatedAt: Date;
+    status: StatusType
 }
 
 type MessageProps = PartialMessageProps & EntityProps & {
@@ -15,18 +16,21 @@ type MessageProps = PartialMessageProps & EntityProps & {
 };
 
 export class Message extends Entity {
-    readonly content?: string | null;
+    readonly content?: string;
     readonly multimediaUrl?: string;
     readonly type: MessageType;
+    readonly status: StatusType;
     readonly chatId: number;
     readonly senderId: number;
     readonly updatedAt: Date;
+    readonly chatType?: string;
 
     constructor(props: MessageProps) {
         super({ id: props.id, createAt: props.createAt });
         this.content = props.content;
         this.multimediaUrl = props.multimediaUrl;
         this.type = props.type;
+        this.status = props.status;
         this.chatId = props.chatId;
         this.senderId = props.senderId;
         this.updatedAt = props.updatedAt;
