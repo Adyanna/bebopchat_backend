@@ -76,6 +76,7 @@ export const registerCallSocket = (io: Server, socket: Socket) => {
     );
 
     socket.on('accept_call', async (data: { chatId: number; targetUserId: number }) => {
+        console.log('BACKEND: accept_call recibido', data);
         const receiverId = getUserId();
         const call = calls.get(getCallKey(data.chatId, data.targetUserId, receiverId));
 
