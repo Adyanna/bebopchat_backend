@@ -198,6 +198,33 @@ export class PrismaChatRepository implements ChatRepository {
         });
     }
 
+    async addParticipants(chatId: number, userContactIds: number[]):
+        Promise<Chat> {
+        const updatedChat = await this.prisma.chats.update({
+            where: {
+                id: chatId,
+            },
+            data: {
+                chatParticipants: {
+                    create: userContactIds.map(userId => ({
+                        userId,
+                        role: "MEMBER"
+                    })),
+                }
+            },
+            include: {
+                chatParticipants: {
+                    include: {
+                        user: true,
+                    },
+                },
+            },
+        });
+
+        return this.restore(updatedChat);
+
+    }
+
 
     private restore(prismaChat: PrismaChat): Chat {
         return new Chat({

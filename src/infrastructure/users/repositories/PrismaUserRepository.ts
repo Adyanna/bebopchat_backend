@@ -39,6 +39,18 @@ export class PrismaUserRepository implements UserRepository {
         return this.restore(user);
     }
 
+    async findManyByIds(userIds: number[]): Promise<User[]> {
+        const users = await this.prisma.user.findMany({
+            where: {
+                id: {
+                    in: userIds,
+                },
+            },
+        })
+
+        return users.map(user => this.restore(user));
+    }
+
     private restore(prismaUser: PrismaUser): User {
         return new User({
             id: prismaUser.id,

@@ -10,6 +10,7 @@ import { updateMessageStatusController } from "@/ui/message/controller/update-me
 
 import { updateGroupChatController } from "../controller/updateGroupChatController";
 import { removeGroupParticipantController } from "../controller/remove-group-participant-controller";
+import { addGroupParticipantsController } from "../controller/add-group-participants-controller";
 
 export const chatRouter = Router();
 
@@ -24,4 +25,5 @@ chatRouter.patch('/:id/messages/:messageId/status', [authenticationMiddleware, u
 chatRouter.patch('/:id/messages/:messageId', [authenticationMiddleware, editMessageController]);
 chatRouter.delete('/:id/messages/:messageId', [authenticationMiddleware, deleteMessageController]);
 chatRouter.patch("/:id", [authenticationMiddleware, updateGroupChatController]);
+chatRouter.post("/:id/participants", [authenticationMiddleware, addGroupParticipantsController]);
 chatRouter.delete("/:id/participants/:userId", [authenticationMiddleware, removeGroupParticipantController]);
