@@ -58,8 +58,7 @@ export class PrismaMessageRepository implements MessageRepository {
         })
     }
 
-    async getMessagesByChatId(params: GetMessagesByChatInput):
-        Promise<Message[]> {
+    async getMessagesByChatId(params: GetMessagesByChatInput):Promise<Message[]> {
         const { before, limit, chatId } = params;
         const messagesDb = await this.prisma.message.findMany({
             where: {
@@ -70,12 +69,29 @@ export class PrismaMessageRepository implements MessageRepository {
                     }
                 })
             },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        perfil: {
+                            select: {
+                                photoUrl: true,
+                            },
+                        },
+                    },
+                },
+                chat: {
+                    select: {
+                        type: true
+                    }
+                },
+            },
             orderBy: {
                 id: 'desc'
             },
             take: limit
         });
-
 
         const messages = messagesDb.map(messagedb => this.restore(messagedb)).reverse();
 
@@ -218,16 +234,24 @@ export class PrismaMessageRepository implements MessageRepository {
     }
 
     private restore(prismaMessage: PrismaMessage): Message {
-        return new Message({
-            id: prismaMessage.id,
-            content: prismaMessage.content ?? undefined,
-            multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
-            type: prismaMessage.type,
-            status: prismaMessage.status,
-            chatId: prismaMessage.chatId,
-            senderId: prismaMessage.senderId,
-            createAt: prismaMessage.createdAt,
-            updatedAt: prismaMessage.updatedAt
-        });
-    }
+    return new Message({
+        id: prismaMessage.id,
+        content: prismaMessage.content ?? undefined,
+        multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
+        type: prismaMessage.type,
+        status: prismaMessage.status,
+        chatId: prismaMessage.chatId,
+        senderId: prismaMessage.senderId,
+        createAt: prismaMessage.createdAt,
+        updatedAt: prismaMessage.updatedAt,
+        chatType: (prismaMessage as any).chat?.type,
+        user: (prismaMessage as any).user
+        ? {
+            id: (prismaMessage as any).user.id,
+            fullname: (prismaMessage as any).user.fullname,
+            photoUrl: (prismaMessage as any).user.perfil?.photoUrl ?? null,
+        }
+        : undefined,
+    });
+}
 }
