@@ -77,39 +77,91 @@ export const registerCallSocket = (io: Server, socket: Socket) => {
 
     socket.on('accept_call', async (data: { chatId: number; targetUserId: number }) => {
         console.log('BACKEND: accept_call recibido', data);
-        const receiverId = getUserId();
-        const call = calls.get(getCallKey(data.chatId, data.targetUserId, receiverId));
+        try {
+            const receiverId = getUserId();
+            const { chatId, targetUserId: callerId } = data;
+            if (!Number.isInteger(chatId) || !Number.isInteger(callerId) || receiverId === callerId) {
+                socket.emit('call_error', {
+                    message: 'Datos de llamada inválidos',
+                });
+                return;
+            }
 
-        if (!call || call.status !== 'pending') {
+            const key = getCallKey(chatId, callerId, receiverId);
+            const call = calls.get(key);
+
+            if (!call || call.status !== 'pending') {
+                socket.emit('call_error', {
+                    message: 'La invitación ya no está disponible',
+                });
+                return;
+            }
+
+            const repository = new PrismaChatRepository();
+            const chat = await repository.findById(chatId);
+
+            if (!chat || chat.type !== 'INDIVIDUAL' || !isParticipant(chat, receiverId) || !isParticipant(chat, callerId) || call.targetUserId !== receiverId) {
+                socket.emit('call_error', {
+                    message: 'No tienes permiso para aceptar esta llamada',
+                });
+                return;
+            }
+
+            call.status = 'active';
+
+            io.to(`user:${callerId}`).emit('call_accepted', {
+                chatId,
+                userId: receiverId,
+            })
+
+        } catch (error) {
+            console.error('Error al aceptar llamada:', error);
             socket.emit('call_error', {
-                message: 'La invitación ya no está disponible',
+                message: 'No se pudo aceptar la llamada',
             });
-            return;
         }
-
-        call.status = 'active';
-
-        io.to(`user:${call.callerId}`).emit('call_accepted', {
-            chatId: call.chatId,
-            userId: receiverId,
-        });
     });
 
-    socket.on('reject_call', (data: { chatId: number; targetUserId: number }) => {
-        const receiverId = getUserId();
-        const key = getCallKey(data.chatId, data.targetUserId, receiverId);
-        const call = calls.get(key);
+    socket.on('reject_call', async (data: { chatId: number; targetUserId: number }) => {
+        try {
+            const receiverId = getUserId();
+            const { chatId, targetUserId: callerId } = data;
 
-        if (!call || call.status !== 'pending') return;
+            if (!Number.isInteger(chatId) || !Number.isInteger(callerId) || receiverId === callerId) {
+                socket.emit('call_error', {
+                    message: 'Datos de llamada inválidos',
+                });
+                return;
+            }
 
-        calls.delete(key);
+            const key = getCallKey(chatId, callerId, receiverId);
+            const call = calls.get(key);
 
-        io.to(`user:${call.callerId}`).emit('call_rejected', {
-            chatId: call.chatId,
-            userId: receiverId,
-        });
-    },
-    );
+            if (!call || call.status !== 'pending') return;
+
+            const repository = new PrismaChatRepository();
+            const chat = await repository.findById(chatId);
+
+            if (!chat || chat.type !== 'INDIVIDUAL' || !isParticipant(chat, receiverId) || !isParticipant(chat, callerId) || call.targetUserId !== receiverId) {
+                socket.emit('call_error', {
+                    message: 'No tienes permiso para rechazar esta llamada',
+                });
+                return;
+            }
+
+            calls.delete(key);
+
+            io.to(`user:${callerId}`).emit('call_rejected', {
+                chatId,
+                userId: receiverId,
+            });
+        } catch (error) {
+            console.error('Error al rechazar llamada:', error);
+            socket.emit('call_error', {
+                message: 'No se pudo rechazar la llamada',
+            });
+        }
+    });
 
     socket.on('call_signal', async (data: { chatId: number; targetUserId: number; signal: unknown; }) => {
         try {
@@ -152,24 +204,36 @@ export const registerCallSocket = (io: Server, socket: Socket) => {
     },
     );
 
-    socket.on(
-        'end_call',
-        (data: { chatId: number; targetUserId: number }) => {
-            const userId = getUserId();
-            const call = findCall(data.chatId, userId, data.targetUserId);
+    socket.on('end_call', (data: { chatId: number; targetUserId: number }) => {
+        const userId = getUserId();
+        const { chatId, targetUserId } = data;
 
-            if (!call) return;
-
-            calls.delete(
-                getCallKey(call.chatId, call.callerId, call.targetUserId),
-            );
-
-            const otherUserId = call.callerId === userId ? call.targetUserId : call.callerId;
-
-            io.to(`user:${otherUserId}`).emit('call_ended', {
-                chatId: call.chatId,
-                userId,
+        if (!Number.isInteger(chatId) || !Number.isInteger(targetUserId) || userId === targetUserId) {
+            socket.emit('call_error', {
+                message: 'Datos de llamada inválidos',
             });
-        },
-    );
+            return;
+        }
+
+        const call = findCall(chatId, userId, targetUserId);
+
+        if (!call || call.status !== 'active') return;
+
+        // Solo los participantes de esta llamada pueden finalizarla.
+        if (userId !== call.callerId && userId !== call.targetUserId) {
+            socket.emit('call_error', {
+                message: 'No tienes permiso para finalizar esta llamada',
+            });
+            return;
+        }
+
+        calls.delete(getCallKey(call.chatId, call.callerId, call.targetUserId));
+
+        const otherUserId = call.callerId === userId ? call.targetUserId : call.callerId;
+
+        io.to(`user:${otherUserId}`).emit('call_ended', {
+            chatId,
+            userId,
+        });
+    });
 };
