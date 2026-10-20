@@ -104,6 +104,8 @@ model Views {
     createdAt DateTime @default(now())
     user      User     @relation(fields: [userId], references: [id])
     estado    Estados  @relation(fields: [estadoId], references: [id])
+
+    @@unique([userId, estadoId])
 }
 
 model Call {

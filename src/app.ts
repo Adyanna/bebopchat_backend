@@ -11,6 +11,7 @@ import { authRoute } from '@/ui/authentication/route/authRoute';
 import { profileRoute } from '@/ui/profile/route/profileRoute';
 import { uploadRoute } from './ui/upload/route/uploadRoute';
 import { userRouter } from './ui/users/routes/users-router';
+import { statusRouter } from './ui/status/route/statusRoute';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use('/profile', profileRoute);
 app.use("/users", userRouter);
 app.use('/chats', chatRouter);
 app.use('/upload',uploadRoute)
+app.use('/status',statusRouter)
 
 // Servir la carpeta uploads de forma pública
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
