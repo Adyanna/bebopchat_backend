@@ -13,7 +13,11 @@ type PrismaChat = Prisma.ChatsGetPayload<{
     include: {
         chatParticipants: {
             include: {
-                user: true;
+                user: {
+                    include: {
+                        perfil: true
+                    }
+                }
             };
         };
     };
@@ -23,7 +27,11 @@ type PrismaList = Prisma.ChatsGetPayload<{
     include: {
         chatParticipants: {
             include: {
-                user: true;
+                user: {
+                    include: {
+                        perfil: true,
+                    }
+                }
             };
         };
         mensajes: {
@@ -56,7 +64,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                perfil: true
+                            }
+                        }
                     }
                 }
             }
@@ -88,7 +100,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                perfil: true
+                            }
+                        }
                     }
                 }
             }
@@ -110,7 +126,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                perfil: true
+                            }
+                        }
                     }
                 }
             }
@@ -137,7 +157,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true
+                        user: {
+                            include: {
+                                perfil: true,
+                            }
+                        }
                     }
                 },
                 mensajes: {
@@ -175,7 +199,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                perfil: true
+                            }
+                        }
                     },
                 },
             },
@@ -215,7 +243,11 @@ export class PrismaChatRepository implements ChatRepository {
             include: {
                 chatParticipants: {
                     include: {
-                        user: true,
+                        user: {
+                            include: {
+                                perfil: true
+                            }
+                        }
                     },
                 },
             },
@@ -236,7 +268,8 @@ export class PrismaChatRepository implements ChatRepository {
             participants: prismaChat.chatParticipants.map((participant) => ({
                 userId: participant.userId,
                 fullname: participant.user.fullname,
-                role: participant.role
+                role: participant.role,
+                profilePicture: participant.user.perfil?.photoUrl ?? null
             }))
         })
     }
@@ -258,6 +291,7 @@ export class PrismaChatRepository implements ChatRepository {
                 userId: participant.userId,
                 fullname: participant.user.fullname,
                 role: participant.role,
+                profilePicture: participant.user.perfil?.photoUrl ?? null
             })),
             lastMessage: prismaList.mensajes[0]
                 ? this.restoreLastMessage(prismaList.mensajes[0])
