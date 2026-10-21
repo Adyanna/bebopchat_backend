@@ -216,7 +216,7 @@ export const registerCallSocket = (io: Server, socket: Socket) => {
 
         const call = findCall(chatId, userId, targetUserId);
 
-        if (!call || call.status !== 'active') return;
+        if (!call) return;
 
         // Solo los participantes de esta llamada pueden finalizarla.
         if (userId !== call.callerId && userId !== call.targetUserId) {
