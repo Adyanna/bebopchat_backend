@@ -67,7 +67,11 @@ export class PrismaContactRepository {
                 }),
             },
             include: {
-                userContact: true,
+                userContact: {
+                    include: {
+                        perfil: true
+                    }
+                },
             },
             orderBy: {
                 id: 'desc',
@@ -80,6 +84,7 @@ export class PrismaContactRepository {
             userContactId: contactDb.userContactId,
             phone: contactDb.userContact.phone,
             fullname: contactDb.userContact.fullname,
+            profilePicture: contactDb.userContact.perfil?.photoUrl ?? null
         }));
 
         const hasMore = userContacts.length === limit + 1;

@@ -58,8 +58,7 @@ export class PrismaMessageRepository implements MessageRepository {
         })
     }
 
-    async getMessagesByChatId(params: GetMessagesByChatInput):
-        Promise<Message[]> {
+    async getMessagesByChatId(params: GetMessagesByChatInput):Promise<Message[]> {
         const { before, limit, chatId } = params;
         const messagesDb = await this.prisma.message.findMany({
             where: {
@@ -70,12 +69,29 @@ export class PrismaMessageRepository implements MessageRepository {
                     }
                 })
             },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        perfil: {
+                            select: {
+                                photoUrl: true,
+                            },
+                        },
+                    },
+                },
+                chat: {
+                    select: {
+                        type: true
+                    }
+                },
+            },
             orderBy: {
                 id: 'desc'
             },
             take: limit
         });
-
 
         const messages = messagesDb.map(messagedb => this.restore(messagedb)).reverse();
 
@@ -83,11 +99,44 @@ export class PrismaMessageRepository implements MessageRepository {
     }
 
 
+    // async findById(messageid: number): Promise<Message | null> {
+    //     const message = await this.prisma.message.findUnique({
+    //         where: {
+    //             id: messageid
+    //         }
+    //     });
+
+    //     if (!message) {
+    //         return null;
+    //     }
+
+    //     return this.restore(message);
+    // }
+
+    
     async findById(messageid: number): Promise<Message | null> {
         const message = await this.prisma.message.findUnique({
             where: {
                 id: messageid
-            }
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        perfil: {
+                            select: {
+                                photoUrl: true,
+                            },
+                        },
+                    },
+                },
+                chat: {
+                    select: {
+                        type: true
+                    }
+                },
+            },
         });
 
         if (!message) {
@@ -98,13 +147,14 @@ export class PrismaMessageRepository implements MessageRepository {
     }
 
 
+
     async updateMessageStatus(
         messageId: number,
         status: StatusType,
         userId: number
     ): Promise<{message: Message;chatType: string;}> {
 
-        console.log("BUSCAMOS LOS MENSAJES: ")
+
         const message = await this.prisma.message.findUnique({
             where: { id: messageId },
             include: {
@@ -119,13 +169,9 @@ export class PrismaMessageRepository implements MessageRepository {
         if (!message) {
             throw new Error("Mensaje no encontrado");
         }
-        console.log("MENSAJE ENCONTRADO: ",message)
-        console.log("VERIFICAMOS SI ES INDIVIDUAL O GRUPAL")
-        console.log("CHAT TYPE:  ",message.chat.type)
 
         // Chat individual: actualizar el estado directamente
         if (message.chat.type === "INDIVIDUAL") {
-            console.log("ES INDIVIDUAL SE ACTUALIZA ESTADO Y RECOTA EL VALOR: ",status)
             const updatedMessage = await this.prisma.message.update({
                 where: { id: messageId },
                 data: { status },
@@ -137,8 +183,6 @@ export class PrismaMessageRepository implements MessageRepository {
         }
 
         // Chat grupal: registrar quién vio el mensaje
-        console.log("ES GRUPAL, OBTENEMOS EL CAMPOS VIEW: ",message.viewedBy)
-
         const viewedByIds = message.viewedBy
             ? message.viewedBy.split(",").filter(Boolean)
             : [];
@@ -146,22 +190,13 @@ export class PrismaMessageRepository implements MessageRepository {
         if (!viewedByIds.includes(String(userId))) {
             viewedByIds.push(String(userId));
         }
-        console.log("ANIADIMOS AL USUARIO ACTUAL EN CASO QUE NO ESTE: ", viewedByIds,"USER ID", userId)
-
         const recipients = message.chat.chatParticipants.filter(
             (participant) => participant.userId !== message.senderId
         );
 
-        console.log("OBTENEMOS LOS PARTICIPANTES DEL CHAT SIN EL EMISOR: ", recipients)
-
-
         const allRecipientsViewed = recipients.every((participant) =>
             viewedByIds.includes(String(participant.userId))
         );
-
-        console.log("VERIFICAMOS SI TODOS LO VIERON: ", allRecipientsViewed)
-
-
         const updatedMessage = await this.prisma.message.update({
             where: { id: messageId },
             data: {
@@ -218,16 +253,24 @@ export class PrismaMessageRepository implements MessageRepository {
     }
 
     private restore(prismaMessage: PrismaMessage): Message {
-        return new Message({
-            id: prismaMessage.id,
-            content: prismaMessage.content ?? undefined,
-            multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
-            type: prismaMessage.type,
-            status: prismaMessage.status,
-            chatId: prismaMessage.chatId,
-            senderId: prismaMessage.senderId,
-            createAt: prismaMessage.createdAt,
-            updatedAt: prismaMessage.updatedAt
-        });
-    }
+    return new Message({
+        id: prismaMessage.id,
+        content: prismaMessage.content ?? undefined,
+        multimediaUrl: prismaMessage.multimediaUrl ?? undefined,
+        type: prismaMessage.type,
+        status: prismaMessage.status,
+        chatId: prismaMessage.chatId,
+        senderId: prismaMessage.senderId,
+        createAt: prismaMessage.createdAt,
+        updatedAt: prismaMessage.updatedAt,
+        chatType: (prismaMessage as any).chat?.type,
+        user: (prismaMessage as any).user
+        ? {
+            id: (prismaMessage as any).user.id,
+            fullname: (prismaMessage as any).user.fullname,
+            photoUrl: (prismaMessage as any).user.perfil?.photoUrl ?? null,
+        }
+        : undefined,
+    });
+}
 }

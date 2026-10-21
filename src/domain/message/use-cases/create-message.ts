@@ -42,6 +42,12 @@ export class CreateMessageUseCase {
             type
         })
 
-        return message;
+        const messageWithDetails = await this.messageRepository.findById(message.id);
+
+        if (!messageWithDetails) {
+            throw new EntityNotFoundError('Message', message.id.toString());
+        }
+
+        return messageWithDetails;
     }
 }

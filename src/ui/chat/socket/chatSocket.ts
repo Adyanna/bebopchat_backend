@@ -7,23 +7,17 @@ import { registerCallSocket } from './callSocket';
 
 export const registerChatSocket = (io: Server) => {
   io.on('connection', async (socket: Socket) => {
-    console.log(`⚡ Conexión establecida. Socket ID: ${socket.id}`);
-    console.log('Usuario autenticado:', socket.data.userId);
 
     const userId = socket.data.userId;
 
     registerCallSocket(io, socket);
-
-    console.log('Usuario autenticado:', userId);
     // Vincular el usuario con su conexión
     socket.join(`user:${userId}`);
-    console.log(`Usuario ${userId} vinculado a su conexión`);
 
     //ACTUALIZA TODOS LOS MENSAJES QUE ESTAN EN SEND A RECIBE
     // POR QUE EL USUARIO SE CONECTO
     const messageRepository = new PrismaMessageRepository();
     const updatePendingMessagesUseCase = new UpdatePendingMessagesUseCase(messageRepository);
-    console.log(userId, " - INGRESO A ACTUALIZACION DE MENSAJES DEL USUARIO")
     try {
       const messages = await updatePendingMessagesUseCase.execute({
         userId: Number(userId),
@@ -36,7 +30,6 @@ export const registerChatSocket = (io: Server) => {
           status: message.status,
         });
       }
-      console.log(userId, " - FINALIZACION A ACTUALIZACION DE MENSAJES DEL USUARIO")
 
     } catch (error) {
       console.error('Error al actualizar mensajes pendientes:', error);
@@ -48,9 +41,6 @@ export const registerChatSocket = (io: Server) => {
     socket.on('join_conversation', async (chatId: string) => {
       // socket.join(chatId);
 
-      // console.log(
-      //   `💬 El socket ${socket.id} se unió a la conversación: ${chatId}`,
-      // );
       try {
         const userId = socket.data.userId;
         const chatRepository = new PrismaChatRepository();
@@ -77,13 +67,6 @@ export const registerChatSocket = (io: Server) => {
 
         socket.join(`chat:${chatId}`);
 
-        console.log(
-          `💬 El usuario ${userId} se unió a la conversación ${chatId}`,
-        );
-        console.log(
-          `✅ ÉXITO: El usuario ${userId} se unió a la conversación ${chatId}`,
-        );
-
         socket.emit('joined_conversation', {
           chatId: Number(chatId),
           message: 'Entrada exitosa a la conversación',
@@ -100,10 +83,6 @@ export const registerChatSocket = (io: Server) => {
 
     socket.on('leave_conversation', (chatId: string) => {
       socket.leave(chatId);
-
-      console.log(
-        `🚪 El socket ${socket.id} salió de la conversación: ${chatId}`,
-      );
     });
 
     socket.on('disconnect', () => {

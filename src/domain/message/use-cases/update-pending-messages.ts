@@ -11,7 +11,6 @@ export class UpdatePendingMessagesUseCase {
     ) {}
 
     async execute(params: UpdatePendingMessagesUseCaseInput) {
-        console.log("INGRESO AL METODO EN DOMAIN USECASES: ", params.userId)
         return this.messageRepository.updatePendingMessages(params.userId);
     }
 }

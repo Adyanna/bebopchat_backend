@@ -5,6 +5,7 @@ export interface ChatParticipant {
     userId: number;
     fullname: string;
     role: ParticipantRole;
+    profilePicture: string | null;
 }
 
 export interface LastMessage {

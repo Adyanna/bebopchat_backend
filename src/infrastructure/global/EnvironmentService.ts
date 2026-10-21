@@ -1,5 +1,5 @@
 import dotenv from 'dotenv';
-import {z} from 'zod';
+import { z } from 'zod';
 
 const envSchema = z.object({
   DATABASE_URL: z.url(),

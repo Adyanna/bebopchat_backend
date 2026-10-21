@@ -25,7 +25,6 @@ export class CreateProfileUseCase {
   async executeCreateProfile(
     props: CreateProfileUseCaseInput,
   ): Promise<Profile> {
-    console.log("PROPIEDADES:", props)
     const user = await this.authRepository.findOneUser({
       id: props.id,
     });
