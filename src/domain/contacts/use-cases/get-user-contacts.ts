@@ -11,6 +11,7 @@ export interface UserContact {
     userContactId: number;
     phone: string,
     fullname: string;
+    profilePicture: string | null
 }
 
 export interface GetUserContactsResult {
