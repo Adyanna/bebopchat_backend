@@ -18,7 +18,6 @@ class EnvironmentService {
 
     try {
       this.env = envSchema.parse(process.env);
-      console.log('Environment variables loaded successfully:', this.env);
     } catch (error: unknown) {
       console.error(
         'Error parsing environment variables:',

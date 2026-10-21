@@ -23,11 +23,11 @@ export const createMessageController = async (req: Request, res: Response, next:
             content,
             multimediaUrl,
         });
+        
 
         // Obtener los sockets que están dentro de esta conversación.
         // Obtener los participantes de la conversación.
         const chat = await prismaChatRepository.findById(message.chatId);
-        console.log("verificar si es grupal", chat)
         if (chat) {
             for (const participant of chat.participants) {
                 // No enviar el evento al remitente.
@@ -40,6 +40,8 @@ export const createMessageController = async (req: Request, res: Response, next:
                     .emit("receive_message", message);
             }
         }
+
+
 
         res.status(201).json(message);
     } catch (error) {

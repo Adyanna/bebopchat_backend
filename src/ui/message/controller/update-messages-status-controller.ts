@@ -28,7 +28,6 @@ export const updateMessageStatusController = async (
             status,
             userId: Number(req.userId),
         });
-        console.log("RECIBIMOS LA RESPUESTA DE LA ACTUALIZACION: ", data)
         // controlar si es individual o grupal y si es grupal si lo vio toditos
         if (data.chatType === "INDIVIDUAL" || (data.chatType === "GROUP" && data.message.status === "VIEW") )
             {
