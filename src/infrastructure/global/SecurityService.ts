@@ -17,13 +17,16 @@ export class SecurityService implements SecurityServices {
     return await bcrypt.compare(plainPw, hashPw2);
   }
   generateJwt(userId: number): string {
-    const token = Jwt.sign({ userId: userId }, this.SECRETKEY);
+    const token = Jwt.sign({ userId: userId },
+      this.SECRETKEY,
+      { expiresIn: '24h' }
+    );
     return token;
   }
-  verifyjwt(token: string): { iat: number; userId: number } | null {
+  verifyjwt(token: string): { iat: number; userId: number; exp: number; } | null {
     try {
       const decodedToekn = Jwt.verify(token, this.SECRETKEY);
-      return decodedToekn as { iat: number; userId: number };
+      return decodedToekn as { iat: number; userId: number; exp: number; };
     } catch {
       return null;
     }
