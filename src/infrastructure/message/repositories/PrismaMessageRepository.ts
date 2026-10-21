@@ -99,11 +99,44 @@ export class PrismaMessageRepository implements MessageRepository {
     }
 
 
+    // async findById(messageid: number): Promise<Message | null> {
+    //     const message = await this.prisma.message.findUnique({
+    //         where: {
+    //             id: messageid
+    //         }
+    //     });
+
+    //     if (!message) {
+    //         return null;
+    //     }
+
+    //     return this.restore(message);
+    // }
+
+    
     async findById(messageid: number): Promise<Message | null> {
         const message = await this.prisma.message.findUnique({
             where: {
                 id: messageid
-            }
+            },
+            include: {
+                user: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        perfil: {
+                            select: {
+                                photoUrl: true,
+                            },
+                        },
+                    },
+                },
+                chat: {
+                    select: {
+                        type: true
+                    }
+                },
+            },
         });
 
         if (!message) {
@@ -112,6 +145,7 @@ export class PrismaMessageRepository implements MessageRepository {
 
         return this.restore(message);
     }
+
 
 
     async updateMessageStatus(

@@ -81,7 +81,7 @@ model Message {
     senderId      Int
     chatId        Int
     createdAt     DateTime    @default(now())
-    updatedAt     DateTime    @updatedAt
+    updatedAt     DateTime    @default(now())
     user          User        @relation(fields: [senderId], references: [id])
     chat          Chats       @relation(fields: [chatId], references: [id])
 }
