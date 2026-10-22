@@ -45,8 +45,9 @@ Esta separación facilita el mantenimiento, las pruebas y la evolución de las f
 - **Mensajes:** creación, consulta paginada, edición y eliminación.
 - **Multimedia:** envío de imágenes, vídeos y notas de voz.
 - **Administración de grupos:** edición de información y eliminación de participantes.
-- **Tiempo real:** comunicación mediante Socket.IO y señalización para llamadas WebRTC.
-- **Actividad:** seguimiento del último mensaje y la última actividad de las conversaciones.
+- **Estados**: Publicacion de estados con texto y multimedia los cuales otros usuarios pueden ver en tiempo real.
+- **Tiempo real:** comunicación mediante Socket.IO para mensajeria instantanea y señalización para llamadas de audio WebRTC.
+
 
 ## API REST
 
